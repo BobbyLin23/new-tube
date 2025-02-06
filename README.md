@@ -17,7 +17,7 @@ NewTube is a clone of Youtube.
 - [x] Project Setup
 - [x] Basic Layout
 - [x] Authentication
-- [ ] DB Setup
+- [x] DB Setup
 - [ ] Webhook sync
 - [ ] trpc setup
 - [ ] trpc config
