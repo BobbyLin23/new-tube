@@ -11,6 +11,7 @@ NewTube is a clone of Youtube.
 - Clerk
 - Drizzle ORM
 - Neon DB with Postgres SQL
+- trpc
 
 ## TODO
 
@@ -18,8 +19,8 @@ NewTube is a clone of Youtube.
 - [x] Basic Layout
 - [x] Authentication
 - [x] DB Setup
-- [ ] Webhook sync
-- [ ] trpc setup
+- [x] Webhook sync
+- [x] trpc setup
 - [ ] trpc config
 - [ ] Video categories
 - [ ] Studio Layout
