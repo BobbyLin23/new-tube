@@ -12,6 +12,7 @@ NewTube is a clone of Youtube.
 - Drizzle ORM
 - Neon DB with Postgres SQL
 - trpc
+- Upstash with Redis
 
 ## TODO
 
