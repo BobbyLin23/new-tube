@@ -13,6 +13,7 @@ NewTube is a clone of Youtube.
 - Neon DB with Postgres SQL
 - trpc
 - Upstash with Redis
+- Mux
 
 ## TODO
 
@@ -22,6 +23,14 @@ NewTube is a clone of Youtube.
 - [x] DB Setup
 - [x] Webhook sync
 - [x] trpc setup
-- [ ] trpc config
+- [x] trpc config
 - [ ] Video categories
 - [ ] Studio Layout
+- [ ] Studio videos
+- [ ] Infinite loading
+- [ ] Mux integration
+- [ ] Mux webhooks
+- [ ] Video Form
+- [ ] Video thumbnails
+- [ ] AI background jobs
+- [ ] AI thumbnails
