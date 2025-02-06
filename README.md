@@ -9,12 +9,17 @@ NewTube is a clone of Youtube.
 - Tailwind CSS
 - Shadcn UI
 - Clerk
+- Drizzle ORM
+- Neon DB with Postgres SQL
 
 ## TODO
 
 - [x] Project Setup
 - [x] Basic Layout
-- [ ] Authentication
+- [x] Authentication
 - [ ] DB Setup
 - [ ] Webhook sync
 - [ ] trpc setup
+- [ ] trpc config
+- [ ] Video categories
+- [ ] Studio Layout
