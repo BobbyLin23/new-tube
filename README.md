@@ -24,8 +24,8 @@ NewTube is a clone of Youtube.
 - [x] Webhook sync
 - [x] trpc setup
 - [x] trpc config
-- [ ] Video categories
-- [ ] Studio Layout
+- [x] Video categories
+- [x] Studio Layout
 - [ ] Studio videos
 - [ ] Infinite loading
 - [ ] Mux integration
