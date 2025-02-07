@@ -27,7 +27,7 @@ NewTube is a clone of Youtube.
 - [x] Video categories
 - [x] Studio Layout
 - [x] Studio videos
-- [ ] Infinite loading
+- [x] Infinite loading
 - [ ] Mux integration
 - [ ] Mux webhooks
 - [ ] Video Form
