@@ -28,8 +28,8 @@ NewTube is a clone of Youtube.
 - [x] Studio Layout
 - [x] Studio videos
 - [x] Infinite loading
-- [ ] Mux integration
-- [ ] Mux webhooks
+- [x] Mux integration
+- [x] Mux webhooks
 - [ ] Video Form
 - [ ] Video thumbnails
 - [ ] AI background jobs
