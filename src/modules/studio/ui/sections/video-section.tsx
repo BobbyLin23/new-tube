@@ -16,6 +16,9 @@ import {
 } from '@/components/ui/table'
 import Link from 'next/link'
 import { VideoThumbnail } from '@/modules/videos/ui/components/video-thumbnail'
+import { snakeCaseToTitle } from '@/lib/utils'
+import { format } from 'date-fns'
+import { Globe2, Lock } from 'lucide-react'
 
 const VideoSectionSuspense = () => {
   const [data, query] = trpc.studio.getMany.useSuspenseInfiniteQuery(
@@ -57,13 +60,41 @@ const VideoSectionSuspense = () => {
                     <TableCell>
                       <div className="flex items-center gap-4">
                         <div className="relative aspect-video w-36 shrink-0">
-                          <VideoThumbnail />
+                          <VideoThumbnail
+                            imageUrl={video.thumbnailUrl}
+                            previewUrl={video.previewUrl}
+                            title={video.title}
+                            duration={video.duration || 0}
+                          />
+                        </div>
+                        <div className="flex flex-col gap-y-1 overflow-hidden">
+                          <span className="line-clamp-1 text-sm">
+                            {video.title}
+                          </span>
+                          <span className="line-clamp-1 text-xs text-muted-foreground">
+                            {video.description || 'No description'}
+                          </span>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>Visibility</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>createdAt</TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        {video.visibility === 'private' ? (
+                          <Lock className="mr-2 size-4" />
+                        ) : (
+                          <Globe2 className="mr-2 size-4" />
+                        )}
+                        {snakeCaseToTitle(video.visibility)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        {snakeCaseToTitle(video.muxStatus || 'error')}
+                      </div>
+                    </TableCell>
+                    <TableCell className="truncate text-sm">
+                      {format(new Date(video.createdAt), 'd MMM yyyy')}
+                    </TableCell>
                     <TableCell className="text-right">views</TableCell>
                     <TableCell className="text-right">comments</TableCell>
                     <TableCell className="pr-6 text-right">likes</TableCell>
@@ -73,7 +104,6 @@ const VideoSectionSuspense = () => {
           </TableBody>
         </Table>
       </div>
-      {JSON.stringify(data)}
       <InfiniteScroll
         isManual
         hasNextPage={query.hasNextPage}

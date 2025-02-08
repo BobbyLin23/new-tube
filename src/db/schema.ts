@@ -1,5 +1,7 @@
 import { relations } from 'drizzle-orm'
 import {
+  integer,
+  pgEnum,
   pgTable,
   text,
   timestamp,
@@ -41,6 +43,8 @@ export const categoryRelations = relations(categories, ({ many }) => ({
   videos: many(videos),
 }))
 
+export const videoVisibility = pgEnum('video_visibility', ['public', 'private'])
+
 export const videos = pgTable('videos', {
   id: uuid('id').primaryKey().defaultRandom(),
   title: text('name').notNull(),
@@ -52,6 +56,9 @@ export const videos = pgTable('videos', {
   muxTrackId: text('mux_track_id').unique(),
   muxTrackStatus: text('mux_track_status'),
   thumbnailUrl: text('thumbnail_url'),
+  previewUrl: text('preview_url'),
+  duration: integer('duration').default(0).notNull(),
+  visibility: videoVisibility('visibility').default('private').notNull(),
   userId: uuid('user_id')
     .notNull()
     .references(() => users.id, {
