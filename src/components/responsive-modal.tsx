@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 interface ResponsiveModalProps {
   open: boolean
   title: string
-  onOpenChange: () => void
+  onOpenChange: (open: boolean) => void
   children: React.ReactNode
 }
 

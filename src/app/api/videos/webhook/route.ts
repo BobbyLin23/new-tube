@@ -7,6 +7,7 @@ import {
   VideoAssetReadyWebhookEvent,
   VideoAssetTrackReadyWebhookEvent,
 } from '@mux/mux-node/resources/webhooks'
+import { UTApi } from 'uploadthing/server'
 
 import { mux } from '@/lib/mux'
 import { db } from '@/db'
@@ -74,8 +75,20 @@ export const POST = async (request: Request) => {
         return new Response('Playback ID not found', { status: 400 })
       }
 
-      const thumbnailUrl = `https://image.mux.com/${playbackId}/thumbnail.jpg`
-      const previewUrl = `https://image.mux.com/${playbackId}/animated.gif`
+      const tempThumbnailUrl = `https://image.mux.com/${playbackId}/thumbnail.jpg`
+      const tempPreviewUrl = `https://image.mux.com/${playbackId}/animated.gif`
+
+      const utapi = new UTApi()
+      const [uploadedThumbnail, uploadedPreview] =
+        await utapi.uploadFilesFromUrl([tempPreviewUrl, tempThumbnailUrl])
+
+      if (!uploadedThumbnail.data || !uploadedPreview.data) {
+        return new Response('Error uploading files', { status: 500 })
+      }
+
+      const { key: thumbnailKey, url: thumbnailUrl } = uploadedThumbnail.data
+      const { key: previewKey, url: previewUrl } = uploadedPreview.data
+
       const duration = data.duration ? Math.round(data.duration * 1000) : 0
 
       await db
@@ -86,6 +99,8 @@ export const POST = async (request: Request) => {
           muxPlaybackId: playbackId,
           thumbnailUrl,
           previewUrl,
+          thumbnailKey,
+          previewKey,
           duration,
         })
         .where(eq(videos.muxAssetId, data.upload_id))
