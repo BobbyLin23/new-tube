@@ -13,6 +13,7 @@ import {
   CopyCheck,
   Globe2,
   ImagePlus,
+  Loader2,
   Lock,
   MoreVertical,
   RotateCcw,
@@ -97,6 +98,39 @@ const FormSectionSuspense = ({ videoId }: { videoId: string }) => {
     },
   })
 
+  const generateTitle = trpc.videos.generateTitle.useMutation({
+    onSuccess: () => {
+      toast.success('Background job started', {
+        description: 'It may take a few minutes to process',
+      })
+    },
+    onError: () => {
+      toast.error('Something went wrong')
+    },
+  })
+
+  const generateDescription = trpc.videos.generateDescription.useMutation({
+    onSuccess: () => {
+      toast.success('Background job started', {
+        description: 'It may take a few minutes to process',
+      })
+    },
+    onError: () => {
+      toast.error('Something went wrong')
+    },
+  })
+
+  const generateThumbnail = trpc.videos.generateThumbnail.useMutation({
+    onSuccess: () => {
+      toast.success('Background job started', {
+        description: 'It may take a few minutes to process',
+      })
+    },
+    onError: () => {
+      toast.error('Something went wrong')
+    },
+  })
+
   const restoreThumbnail = trpc.videos.restoreThumbnail.useMutation({
     onSuccess: () => {
       utils.studio.getMany.invalidate()
@@ -172,7 +206,26 @@ const FormSectionSuspense = ({ videoId }: { videoId: string }) => {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
+                    <FormLabel>
+                      <div className="flex items-center gap-x-2">
+                        Title
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="size-6 rounded-full [&_svg]:size-3"
+                          onClick={() => generateTitle.mutate({ id: video.id })}
+                          disabled={
+                            generateTitle.isPending || !video.muxTrackId
+                          }
+                        >
+                          {generateTitle.isPending ? (
+                            <Loader2 className="animate-spin" />
+                          ) : (
+                            <Sparkles />
+                          )}
+                        </Button>
+                      </div>
+                    </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -188,7 +241,28 @@ const FormSectionSuspense = ({ videoId }: { videoId: string }) => {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>
+                      <div className="flex items-center gap-x-2">
+                        Description
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="size-6 rounded-full [&_svg]:size-3"
+                          onClick={() =>
+                            generateDescription.mutate({ id: video.id })
+                          }
+                          disabled={
+                            generateDescription.isPending || !video.muxTrackId
+                          }
+                        >
+                          {generateDescription.isPending ? (
+                            <Loader2 className="animate-spin" />
+                          ) : (
+                            <Sparkles />
+                          )}
+                        </Button>
+                      </div>
+                    </FormLabel>
                     <FormControl>
                       <Textarea
                         {...field}
@@ -233,7 +307,11 @@ const FormSectionSuspense = ({ videoId }: { videoId: string }) => {
                               <ImagePlus className="mr-1 size-4" />
                               Change
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                generateThumbnail.mutate({ id: video.id })
+                              }
+                            >
                               <Sparkles className="mr-1 size-4" />
                               AI-Generated
                             </DropdownMenuItem>
