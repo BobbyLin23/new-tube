@@ -51,6 +51,8 @@ import {
 import { VideoPlayer } from '@/modules/videos/ui/components/video-player'
 import { snakeCaseToTitle } from '@/lib/utils'
 import { ThumbnailUploadModal } from '../components/thumbnail-upload-modal'
+import { ThumbnailGenerateModal } from '../components/thumbnail-generate-modal'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export const FormSection = ({ videoId }: { videoId: string }) => {
   return (
@@ -63,7 +65,52 @@ export const FormSection = ({ videoId }: { videoId: string }) => {
 }
 
 const FormSectionSkeleton = () => {
-  return <div>Loading...</div>
+  return (
+    <div>
+      <div className="mb-6 flex items-center justify-between">
+        <div className="space-y-2">
+          <Skeleton className="h-7 w-32" />
+          <Skeleton className="h-4 w-40" />
+        </div>
+        <Skeleton className="h-9 w-24" />
+      </div>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
+        <div className="space-y-8 lg:col-span-3">
+          <div className="space-y-2">
+            <Skeleton className="h-5 w-16" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-5 w-24" />
+            <Skeleton className="h-[220px] w-full" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-5 w-20" />
+            <Skeleton className="h-[84px] w-[153px]" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-5 w-20" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+        </div>
+        <div className="flex flex-col gap-y-8 lg:col-span-2">
+          <div className="flex flex-col gap-y-4 overflow-hidden rounded-xl bg-[#F9F9F9]">
+            <Skeleton className="aspect-video" />
+            <div className="space-y-6 p-4">
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-5 w-full" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-5 w-32" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 const FormSectionSuspense = ({ videoId }: { videoId: string }) => {
@@ -75,6 +122,8 @@ const FormSectionSuspense = ({ videoId }: { videoId: string }) => {
   const utils = trpc.useUtils()
 
   const [isThumbnailModalOpen, setIsThumbnailModalOpen] = useState(false)
+  const [isThumbnailGenerateModalOpen, setIsThumbnailGenerateModalOpen] =
+    useState(false)
 
   const update = trpc.videos.update.useMutation({
     onSuccess: () => {
@@ -120,16 +169,16 @@ const FormSectionSuspense = ({ videoId }: { videoId: string }) => {
     },
   })
 
-  const generateThumbnail = trpc.videos.generateThumbnail.useMutation({
-    onSuccess: () => {
-      toast.success('Background job started', {
-        description: 'It may take a few minutes to process',
-      })
-    },
-    onError: () => {
-      toast.error('Something went wrong')
-    },
-  })
+  // const generateThumbnail = trpc.videos.generateThumbnail.useMutation({
+  //   onSuccess: () => {
+  //     toast.success('Background job started', {
+  //       description: 'It may take a few minutes to process',
+  //     })
+  //   },
+  //   onError: () => {
+  //     toast.error('Something went wrong')
+  //   },
+  // })
 
   const restoreThumbnail = trpc.videos.restoreThumbnail.useMutation({
     onSuccess: () => {
@@ -168,6 +217,11 @@ const FormSectionSuspense = ({ videoId }: { videoId: string }) => {
         videoId={videoId}
         open={isThumbnailModalOpen}
         onOpenChange={setIsThumbnailModalOpen}
+      />
+      <ThumbnailGenerateModal
+        videoId={videoId}
+        open={isThumbnailGenerateModalOpen}
+        onOpenChange={setIsThumbnailGenerateModalOpen}
       />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -309,7 +363,7 @@ const FormSectionSuspense = ({ videoId }: { videoId: string }) => {
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() =>
-                                generateThumbnail.mutate({ id: video.id })
+                                setIsThumbnailGenerateModalOpen(true)
                               }
                             >
                               <Sparkles className="mr-1 size-4" />
