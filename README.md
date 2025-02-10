@@ -6,14 +6,17 @@ NewTube is a clone of Youtube.
 
 - Next.js
 - TypeScript
+- Bun
 - Tailwind CSS
 - Shadcn UI
 - Clerk
 - Drizzle ORM
 - Neon DB with Postgres SQL
 - trpc
-- Upstash with Redis
+- Upstash with Redis, Workflow and Ratelimit
 - Mux
+- Uploadthing
+- OpenAI
 
 ## TODO
 
@@ -30,7 +33,7 @@ NewTube is a clone of Youtube.
 - [x] Infinite loading
 - [x] Mux integration
 - [x] Mux webhooks
-- [ ] Video Form
-- [ ] Video thumbnails
-- [ ] AI background jobs
-- [ ] AI thumbnails
+- [x] Video Form
+- [x] Video thumbnails
+- [x] AI background jobs
+- [x] AI thumbnails
