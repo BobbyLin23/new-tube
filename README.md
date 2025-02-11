@@ -37,3 +37,22 @@ NewTube is a clone of Youtube.
 - [x] Video thumbnails
 - [x] AI background jobs
 - [x] AI thumbnails
+- [ ] Video Page
+- [ ] Video views
+- [ ] Video reactions
+- [ ] Subscriptions
+- [ ] Comments
+- [ ] Comments infinite loading
+- [ ] Comments Replies
+- [ ] Suggestions
+- [ ] Search Page
+- [ ] Improvements
+- [ ] Home feed
+- [ ] Playlist
+- [ ] Custom playlists
+- [ ] Populating playlists
+- [ ] Individual playlist
+- [ ] User page
+- [ ] Banner Upload
+- [ ] Subscription list
+- [ ] Deployment
