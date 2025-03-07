@@ -38,8 +38,8 @@ NewTube is a clone of Youtube.
 - [x] AI background jobs
 - [x] AI thumbnails
 - [x] Video Page
-- [ ] Video views
-- [ ] Video reactions
+- [x] Video views
+- [x] Video reactions
 - [ ] Subscriptions
 - [ ] Comments
 - [ ] Comments infinite loading
