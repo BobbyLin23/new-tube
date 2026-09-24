@@ -21,6 +21,9 @@ const items = [
     auth: true,
   },
 ];
+
+const clerk = useClerk();
+const { isSignedIn } = useAuth();
 </script>
 
 <template>
@@ -28,7 +31,19 @@ const items = [
     <SidebarGroupContent>
       <SidebarMenu>
         <SidebarMenuItem v-for="item in items" :key="item.title">
-          <SidebarMenuButton :tooltip="item.title" asChild :isActive="false" @click="() => {}">
+          <SidebarMenuButton
+            :tooltip="item.title"
+            asChild
+            :isActive="false"
+            @click="
+              (e: Event) => {
+                if (!isSignedIn && item.auth) {
+                  e.preventDefault();
+                  return clerk?.openSignIn();
+                }
+              }
+            "
+          >
             <NuxtLink :href="item.url" class="flex items-center gap-4">
               <component :is="item.icon" />
               <span class="text-sm">{{ item.title }}</span>
