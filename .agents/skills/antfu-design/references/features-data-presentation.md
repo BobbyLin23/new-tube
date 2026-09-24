@@ -7,16 +7,16 @@ description: Preferred rendering patterns for file paths, file icons, relative t
 
 ## Preference Matrix
 
-| Data | Preferred rendering | Class recipe |
-|------|----------------------|-------------|
-| File path | Mono, segmented emphasis, full value in tooltip | `font-mono truncate` + `title` + segment opacity (`op25/op50/op60`) |
-| File icon | Name-first then extension mapping, stable literal classes | literal `i-*` class + semantic tint (`color-blue-500`, `op-fade`) |
-| Time ago | Compact relative time in dense rows | `text-micro font-mono tabular-nums op-fade` |
-| Date/time | Absolute date in tooltip/detail | `title`/tooltip + `toLocaleString()` |
-| Number | Locale-formatted + tabular mono alignment | `text-micro font-mono tabular-nums` |
-| Badge | Small semantic chip with low-alpha background | `inline-flex items-center gap-1 px-1.5 py-px rounded border border-emerald-500/40 bg-emerald-500/10 text-micro uppercase tracking-wide` |
-| Button | Reuse semantic action shortcuts | `btn-action`, `btn-action-sm`, `btn-action-icon` |
-| Icon | Icon + label pair for non-trivial actions | `inline-flex items-center gap-1` |
+| Data      | Preferred rendering                                       | Class recipe                                                                                                                            |
+| --------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| File path | Mono, segmented emphasis, full value in tooltip           | `font-mono truncate` + `title` + segment opacity (`op25/op50/op60`)                                                                     |
+| File icon | Name-first then extension mapping, stable literal classes | literal `i-*` class + semantic tint (`color-blue-500`, `op-fade`)                                                                       |
+| Time ago  | Compact relative time in dense rows                       | `text-micro font-mono tabular-nums op-fade`                                                                                             |
+| Date/time | Absolute date in tooltip/detail                           | `title`/tooltip + `toLocaleString()`                                                                                                    |
+| Number    | Locale-formatted + tabular mono alignment                 | `text-micro font-mono tabular-nums`                                                                                                     |
+| Badge     | Small semantic chip with low-alpha background             | `inline-flex items-center gap-1 px-1.5 py-px rounded border border-emerald-500/40 bg-emerald-500/10 text-micro uppercase tracking-wide` |
+| Button    | Reuse semantic action shortcuts                           | `btn-action`, `btn-action-sm`, `btn-action-icon`                                                                                        |
+| Icon      | Icon + label pair for non-trivial actions                 | `inline-flex items-center gap-1`                                                                                                        |
 
 Use this matrix as default output behavior unless the host project already defines alternatives.
 
@@ -48,25 +48,24 @@ Use this matrix as default output behavior unless the host project already defin
 ```ts
 // @unocss-include
 const byName = {
-  'dockerfile': { icon: 'i-ph-file-cloud-duotone', color: 'color-sky-500' },
-  '.env': { icon: 'i-ph-file-lock-duotone', color: 'color-amber-600 dark:color-amber-400' },
-}
+  dockerfile: { icon: "i-ph-file-cloud-duotone", color: "color-sky-500" },
+  ".env": { icon: "i-ph-file-lock-duotone", color: "color-amber-600 dark:color-amber-400" },
+};
 
 const byExt = {
-  ts: { icon: 'i-ph-file-ts-duotone', color: 'color-blue-500' },
-  js: { icon: 'i-ph-file-js-duotone', color: 'color-yellow-500' },
-  vue: { icon: 'i-ph-file-vue-duotone', color: 'color-emerald-500' },
-  md: { icon: 'i-ph-file-md-duotone', color: 'op-fade' },
-}
+  ts: { icon: "i-ph-file-ts-duotone", color: "color-blue-500" },
+  js: { icon: "i-ph-file-js-duotone", color: "color-yellow-500" },
+  vue: { icon: "i-ph-file-vue-duotone", color: "color-emerald-500" },
+  md: { icon: "i-ph-file-md-duotone", color: "op-fade" },
+};
 
 export function fileIcon(path: string) {
-  const base = (path.split('/').pop() || path).toLowerCase()
-  const byFilename = byName[base as keyof typeof byName]
-  if (byFilename)
-    return byFilename
+  const base = (path.split("/").pop() || path).toLowerCase();
+  const byFilename = byName[base as keyof typeof byName];
+  if (byFilename) return byFilename;
 
-  const ext = base.includes('.') ? base.slice(base.lastIndexOf('.') + 1) : ''
-  return byExt[ext as keyof typeof byExt] || { icon: 'i-ph-file-duotone', color: 'op-fade' }
+  const ext = base.includes(".") ? base.slice(base.lastIndexOf(".") + 1) : "";
+  return byExt[ext as keyof typeof byExt] || { icon: "i-ph-file-duotone", color: "op-fade" };
 }
 ```
 
@@ -78,26 +77,24 @@ export function fileIcon(path: string) {
 
 ```ts
 export function formatAge(ts: number): string {
-  const s = Math.max(0, Math.floor((Date.now() - ts) / 1000))
-  if (s < 60) return `${s}s`
-  const m = Math.floor(s / 60)
-  if (m < 60) return `${m}m`
-  const h = Math.floor(m / 60)
-  if (h < 24) return `${h}h`
-  const d = Math.floor(h / 24)
-  if (d < 30) return `${d}d`
-  const mo = Math.floor(d / 30)
-  if (mo < 12) return `${mo}mo`
-  return `${Math.floor(d / 365)}y`
+  const s = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+  if (s < 60) return `${s}s`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h`;
+  const d = Math.floor(h / 24);
+  if (d < 30) return `${d}d`;
+  const mo = Math.floor(d / 30);
+  if (mo < 12) return `${mo}mo`;
+  return `${Math.floor(d / 365)}y`;
 }
 
-export const formatDateTime = (ts: number) => new Date(ts).toLocaleString()
+export const formatDateTime = (ts: number) => new Date(ts).toLocaleString();
 ```
 
 ```html
-<time class="font-mono text-micro tabular-nums op-fade" title="2026-06-22 09:14:12">
-  8m
-</time>
+<time class="font-mono text-micro tabular-nums op-fade" title="2026-06-22 09:14:12"> 8m </time>
 ```
 
 ## Number
@@ -107,16 +104,16 @@ export const formatDateTime = (ts: number) => new Date(ts).toLocaleString()
 - Render dense metrics as mono + tabular.
 
 ```ts
-const countLabel = count.toLocaleString()
+const countLabel = count.toLocaleString();
 const percentLabel = ratio.toLocaleString(undefined, {
-  style: 'percent',
+  style: "percent",
   minimumFractionDigits: 1,
   maximumFractionDigits: 1,
-})
+});
 const costLabel = new Intl.NumberFormat(undefined, {
-  style: 'currency',
-  currency: 'USD',
-}).format(cost)
+  style: "currency",
+  currency: "USD",
+}).format(cost);
 ```
 
 ```html
@@ -138,21 +135,23 @@ const costLabel = new Intl.NumberFormat(undefined, {
 ```ts
 // Controls/actions
 const controls = {
-  refresh: 'i-ph-arrow-clockwise-duotone',
-  close: 'i-ph-x',
-  openExternal: 'i-octicon-link-external-16',
-}
+  refresh: "i-ph-arrow-clockwise-duotone",
+  close: "i-ph-x",
+  openExternal: "i-octicon-link-external-16",
+};
 
 // File types
 const fileTypes = {
-  ts: 'i-ph-file-ts-duotone color-blue-500',
-  js: 'i-ph-file-js-duotone color-yellow-500',
-  md: 'i-ph-file-md-duotone op-fade',
-}
+  ts: "i-ph-file-ts-duotone color-blue-500",
+  js: "i-ph-file-js-duotone color-yellow-500",
+  md: "i-ph-file-md-duotone op-fade",
+};
 ```
 
 ```html
-<span class="inline-flex items-center gap-1 px-1.5 py-px rounded border border-emerald-500/40 text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 text-micro uppercase tracking-wide">
+<span
+  class="inline-flex items-center gap-1 px-1.5 py-px rounded border border-emerald-500/40 text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 text-micro uppercase tracking-wide"
+>
   <span class="i-octicon-check-circle-16 text-[0.9em]"></span>
   open
 </span>
@@ -175,24 +174,32 @@ const fileTypes = {
 
 ```ts
 // @unocss-include
-type SessionStatus = 'thinking' | 'tool' | 'task' | 'questions' | 'error' | 'idle'
+type SessionStatus = "thinking" | "tool" | "task" | "questions" | "error" | "idle";
 
 interface StatusGlyph {
-  icon: string
-  color: string
-  label: string
+  icon: string;
+  color: string;
+  label: string;
 }
 
 export function sessionStatusGlyph(status: SessionStatus): StatusGlyph {
   switch (status) {
-    case 'thinking':
-      return { icon: 'i-ph-spinner-duotone animate-spin', color: 'color-amber-500', label: 'thinking' }
-    case 'tool':
-      return { icon: 'i-ph-gear-duotone animate-spin', color: 'color-orange-500', label: 'running a tool' }
-    case 'error':
-      return { icon: 'i-ph-warning-circle-duotone', color: 'color-red-500', label: 'error' }
+    case "thinking":
+      return {
+        icon: "i-ph-spinner-duotone animate-spin",
+        color: "color-amber-500",
+        label: "thinking",
+      };
+    case "tool":
+      return {
+        icon: "i-ph-gear-duotone animate-spin",
+        color: "color-orange-500",
+        label: "running a tool",
+      };
+    case "error":
+      return { icon: "i-ph-warning-circle-duotone", color: "color-red-500", label: "error" };
     default:
-      return { icon: 'i-ph-check-circle-duotone', color: 'color-emerald-500/70', label: 'idle' }
+      return { icon: "i-ph-check-circle-duotone", color: "color-emerald-500/70", label: "idle" };
   }
 }
 ```

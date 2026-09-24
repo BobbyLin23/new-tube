@@ -119,12 +119,11 @@ module.exports = {
     extend: {
       colors: {
         warning: "oklch(var(--warning) / <alpha-value>)",
-        "warning-foreground":
-          "oklch(var(--warning-foreground) / <alpha-value>)",
+        "warning-foreground": "oklch(var(--warning-foreground) / <alpha-value>)",
       },
     },
   },
-}
+};
 ```
 
 ```html
@@ -149,9 +148,7 @@ Prefer these approaches in order:
 ### 1. Built-in variants
 
 ```html
-<Button variant="outline" size="sm">
-  Click
-</Button>
+<button variant="outline" size="sm">Click</button>
 ```
 
 ### 2. Tailwind classes via `class`

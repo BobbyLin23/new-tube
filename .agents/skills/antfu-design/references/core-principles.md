@@ -40,10 +40,10 @@ description: Framework-agnostic UnoCSS design principles with semantic shortcuts
 
 ```ts
 export const ui = {
-  panel: 'bg-base color-base border border-base rounded-lg',
-  button: 'btn-action-sm',
-  dimText: 'op-fade text-mini',
-}
+  panel: "bg-base color-base border border-base rounded-lg",
+  button: "btn-action-sm",
+  dimText: "op-fade text-mini",
+};
 ```
 
 ```tsx
@@ -53,7 +53,7 @@ export function Toolbar() {
     <div className={`h-10 flex items-center gap-2 px-3 border-b border-base ${ui.panel}`}>
       <button className={ui.button}>Refresh</button>
     </div>
-  )
+  );
 }
 ```
 
@@ -77,7 +77,7 @@ export function Toolbar() {
 ## Baseline UnoCSS Config
 
 ```ts
-import { createLocalFontProcessor } from '@unocss/preset-web-fonts/local'
+import { createLocalFontProcessor } from "@unocss/preset-web-fonts/local";
 import {
   defineConfig,
   presetIcons,
@@ -85,61 +85,61 @@ import {
   presetWind4,
   transformerDirectives,
   transformerVariantGroup,
-} from 'unocss'
+} from "unocss";
 
 export default defineConfig({
   theme: {
     colors: {
       primary: {
-        300: '#7CBC71',
-        400: '#49833E',
-        600: '#396831',
-        DEFAULT: '#49833E',
+        300: "#7CBC71",
+        400: "#49833E",
+        600: "#396831",
+        DEFAULT: "#49833E",
       },
     },
     fontSize: {
-      micro: ['0.625rem', '0.875rem'],
-      mini: ['0.6875rem', '1rem'],
-      compact: ['0.8125rem', '1.125rem'],
+      micro: ["0.625rem", "0.875rem"],
+      mini: ["0.6875rem", "1rem"],
+      compact: ["0.8125rem", "1.125rem"],
     },
   },
   shortcuts: [
     {
-      'color-base': 'color-neutral-800 dark:color-neutral-200',
-      'bg-base': 'bg-white dark:bg-#111',
-      'bg-secondary': 'bg-#eee dark:bg-#222',
-      'border-base': 'border-#8882',
+      "color-base": "color-neutral-800 dark:color-neutral-200",
+      "bg-base": "bg-white dark:bg-#111",
+      "bg-secondary": "bg-#eee dark:bg-#222",
+      "border-base": "border-#8882",
 
-      'bg-active': 'bg-#8881',
-      'color-active': 'color-primary-600 dark:color-primary-300',
-      'border-active': 'border-primary-600/25 dark:border-primary-400/25',
+      "bg-active": "bg-#8881",
+      "color-active": "color-primary-600 dark:color-primary-300",
+      "border-active": "border-primary-600/25 dark:border-primary-400/25",
 
-      'z-graph-link': 'z-10',
-      'z-top-nav': 'z-60',
-      'z-drawer-backdrop': 'z-90',
-      'z-drawer-content': 'z-100',
+      "z-graph-link": "z-10",
+      "z-top-nav": "z-60",
+      "z-drawer-backdrop": "z-90",
+      "z-drawer-content": "z-100",
     },
-    [/^bg-glass(:\d+)?$/, ([, opacity = ':75']) => `bg-white${opacity} dark:bg-#111${opacity} backdrop-blur-8`],
+    [
+      /^bg-glass(:\d+)?$/,
+      ([, opacity = ":75"]) => `bg-white${opacity} dark:bg-#111${opacity} backdrop-blur-8`,
+    ],
   ],
   presets: [
     presetWind4(),
     presetIcons({ scale: 1.2 }),
     presetWebFonts({
       fonts: {
-        sans: 'DM Sans:200,400,700',
-        mono: 'DM Mono:400,500',
+        sans: "DM Sans:200,400,700",
+        mono: "DM Mono:400,500",
       },
       processors: createLocalFontProcessor({
-        fontAssetsDir: './public/assets/fonts',
-        fontServeBaseUrl: '/assets/fonts',
+        fontAssetsDir: "./public/assets/fonts",
+        fontServeBaseUrl: "/assets/fonts",
       }),
     }),
   ],
-  transformers: [
-    transformerDirectives(),
-    transformerVariantGroup(),
-  ],
-})
+  transformers: [transformerDirectives(), transformerVariantGroup()],
+});
 ```
 
 <!--

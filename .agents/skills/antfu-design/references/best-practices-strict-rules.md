@@ -36,7 +36,9 @@ Use this as a hard checklist before returning UI code.
 
 ```html
 <div class="w-screen h-screen flex flex-col of-hidden bg-base color-base font-sans">
-  <header class="h-nav shrink-0 flex items-center gap-2 px-3 border-b border-base bg-base z-top-nav">
+  <header
+    class="h-nav shrink-0 flex items-center gap-2 px-3 border-b border-base bg-base z-top-nav"
+  >
     <button class="btn-action-icon" aria-label="Open menu">
       <span class="i-ph-list-duotone"></span>
     </button>
@@ -45,7 +47,9 @@ Use this as a hard checklist before returning UI code.
 
   <main class="flex-1 min-h-0 of-auto">
     <div class="p-4 flex items-center gap-2">
-      <span class="inline-flex items-center gap-1 px-1.5 py-px rounded border border-active bg-active color-active text-micro uppercase tracking-wide">
+      <span
+        class="inline-flex items-center gap-1 px-1.5 py-px rounded border border-active bg-active color-active text-micro uppercase tracking-wide"
+      >
         active
       </span>
       <span class="text-micro font-mono tabular-nums op-fade">12,480</span>
@@ -59,6 +63,7 @@ Use this as a hard checklist before returning UI code.
 Run before returning UI code. If a box cannot be ticked honestly, it is not done.
 
 Foundations
+
 - design read declared, dials set from an appropriate baseline (core-design-read)
 - semantic shortcuts used in markup
 - light/dark-safe base tokens present
@@ -66,12 +71,14 @@ Foundations
 - class-only utilities (no Attributify)
 
 Data and type
+
 - long path/ID labels truncate with full value in `title`
 - technical values use mono + tabular-nums
 - one accent color, neutral base, no AI-purple default
 - serif only when justified; not Inter by reflex
 
 Polish
+
 - nested rounded elements use concentric radius
 - borders for dense or structural surfaces, layered shadows for elevated ones
 - enters split and staggered, exits subtle, no `transition: all`
@@ -80,12 +87,14 @@ Polish
 - motion above the static band honors `prefers-reduced-motion`
 
 Anti-slop
+
 - zero em-dash and en-dash characters anywhere visible
 - no generic names, fake-perfect numbers, filler verbs, or div-based fake screenshots
 - no decorative dots, scroll cues, or version stamps unless the brief calls for them
 - every visible string re-read in a copy self-audit
 
 Redesign (if applicable)
+
 - mode detected, audit done, IA, SEO, and nav labels preserved
 
 <!--

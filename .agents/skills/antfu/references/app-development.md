@@ -7,10 +7,10 @@ description: Vue/Nuxt/UnoCSS application conventions. Use when building web apps
 
 ## Framework Selection
 
-| Use Case | Choice |
-|----------|--------|
-| SPA, client-only, library playgrounds | Vite + Vue |
-| SSR, SSG, SEO-critical, file-based routing, API routes | Nuxt |
+| Use Case                                               | Choice     |
+| ------------------------------------------------------ | ---------- |
+| SPA, client-only, library playgrounds                  | Vite + Vue |
+| SSR, SSG, SEO-critical, file-based routing, API routes | Nuxt       |
 
 ## Nuxt Conventions
 
@@ -30,20 +30,20 @@ export default defineNuxtConfig({
   nitro: {
     imports: false, // disable server-side (Nitro) auto-imports
   },
-})
+});
 ```
 
 Framework helpers stay available through the `#imports` alias — import them explicitly:
 
 ```ts
-import { computed, ref } from '#imports'
+import { computed, ref } from "#imports";
 ```
 
-| Option | Effect |
-|--------|--------|
+| Option                      | Effect                                                                             |
+| --------------------------- | ---------------------------------------------------------------------------------- |
 | `imports.autoImport: false` | Stops auto-importing `~/composables` and `~/utils` (and framework APIs like `ref`) |
-| `components.dirs: []` | Stops auto-importing components from `~/components` |
-| `nitro.imports: false` | Stops auto-importing in the server (`server/utils`, etc.) |
+| `components.dirs: []`       | Stops auto-importing components from `~/components`                                |
+| `nitro.imports: false`      | Stops auto-importing in the server (`server/utils`, etc.)                          |
 
 > Standalone Nitro projects already default to `imports: false` — leave server auto-imports off rather than enabling them.
 
@@ -53,33 +53,33 @@ Nuxt's built-in aliases (`~/`, `@/`, `#imports`) are already configured, so they
 
 ## Vue Conventions
 
-| Convention | Preference |
-|------------|------------|
-| Script syntax | Always `<script setup lang="ts">` |
-| State | Prefer `shallowRef()` over `ref()` |
-| Objects | Use `ref()`, avoid `reactive()` |
-| Styling | UnoCSS |
-| Utilities | VueUse |
+| Convention    | Preference                         |
+| ------------- | ---------------------------------- |
+| Script syntax | Always `<script setup lang="ts">`  |
+| State         | Prefer `shallowRef()` over `ref()` |
+| Objects       | Use `ref()`, avoid `reactive()`    |
+| Styling       | UnoCSS                             |
+| Utilities     | VueUse                             |
 
 ### Props and Emits
 
 ```vue
 <script setup lang="ts">
 interface Props {
-  title: string
-  count?: number
+  title: string;
+  count?: number;
 }
 
 interface Emits {
-  (e: 'update', value: number): void
-  (e: 'close'): void
+  (e: "update", value: number): void;
+  (e: "close"): void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   count: 0,
-})
+});
 
-const emit = defineEmits<Emits>()
+const emit = defineEmits<Emits>();
 </script>
 ```
 

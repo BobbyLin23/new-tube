@@ -16,18 +16,19 @@ export default defineConfig({
   theme: {
     boxShadow: {
       // Layered, background-tinted elevation for floating or marketing surfaces.
-      card: '0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.08)',
+      card: "0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.08)",
     },
   },
   shortcuts: [
     {
       // Subtle image edge. Pure black in light, pure white in dark, never a tinted neutral.
-      'img-outline': 'outline outline-1 outline-black/10 dark:outline-white/10 outline-offset-[-1px]',
+      "img-outline":
+        "outline outline-1 outline-black/10 dark:outline-white/10 outline-offset-[-1px]",
       // Tactile press feedback.
-      'tap-scale': 'transition-transform active:scale-[0.96]',
+      "tap-scale": "transition-transform active:scale-[0.96]",
     },
   ],
-})
+});
 ```
 
 ## Borders vs shadows (by context)

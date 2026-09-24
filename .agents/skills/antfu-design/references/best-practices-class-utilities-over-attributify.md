@@ -22,9 +22,7 @@ description: Prefer normal class utilities over Attributify syntax for generated
 Use these as default templates when generating code:
 
 ```html
-<div class="flex items-center gap-2 px2 py1 border border-base rounded">
-  Content
-</div>
+<div class="flex items-center gap-2 px2 py1 border border-base rounded">Content</div>
 ```
 
 ```html
@@ -49,7 +47,7 @@ Use these as default templates when generating code:
 If you want to discourage Attributify in new code:
 
 ```ts
-import { defineConfig, presetIcons, presetWind4 } from 'unocss'
+import { defineConfig, presetIcons, presetWind4 } from "unocss";
 
 export default defineConfig({
   presets: [
@@ -57,20 +55,17 @@ export default defineConfig({
     presetIcons(),
     // Do not include presetAttributify() for new projects.
   ],
-})
+});
 ```
 
 If you need migration compatibility:
 
 ```ts
-import { defineConfig, presetAttributify, presetWind4 } from 'unocss'
+import { defineConfig, presetAttributify, presetWind4 } from "unocss";
 
 export default defineConfig({
-  presets: [
-    presetWind4(),
-    presetAttributify(),
-  ],
-})
+  presets: [presetWind4(), presetAttributify()],
+});
 ```
 
 But still write new components using `class="..."`.

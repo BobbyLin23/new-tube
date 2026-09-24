@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  modules: ["shadcn-nuxt", "@vueuse/nuxt", "@nuxtjs/color-mode"],
+  modules: ["shadcn-nuxt", "@vueuse/nuxt", "@nuxtjs/color-mode", "@nuxt/image"],
   shadcn: {
     prefix: "",
     componentDir: "@/components/ui",

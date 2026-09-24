@@ -10,12 +10,12 @@ Use this when a Vue app uses `floating-vue`. For non-Vue tooltip libraries, appl
 ## Runtime Setup
 
 ```ts
-import FloatingVue from 'floating-vue'
-import 'floating-vue/dist/style.css'
+import FloatingVue from "floating-vue";
+import "floating-vue/dist/style.css";
 
 app.use(FloatingVue, {
   overflowPadding: 20,
-})
+});
 ```
 
 ## Shared Popper Styling
@@ -62,9 +62,7 @@ app.use(FloatingVue, {
 If your library supports custom class names, apply these tokens directly:
 
 ```html
-<div class="bg-tooltip color-base border border-base rounded shadow text-sm">
-  tooltip content
-</div>
+<div class="bg-tooltip color-base border border-base rounded shadow text-sm">tooltip content</div>
 ```
 
 <!--
