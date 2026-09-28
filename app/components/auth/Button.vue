@@ -1,10 +1,19 @@
 <script setup lang="ts">
-import { UserCircleIcon } from "@lucide/vue";
+import { UserButton } from "@clerk/nuxt/components";
+import { UserCircleIcon, ClapperboardIcon } from "@lucide/vue";
 </script>
 
 <template>
   <Show when="signed-in">
-    <UserButton />
+    <UserButton>
+      <UserButton.MenuItems>
+        <UserButton.Link label="Studio" href="/studio">
+          <template #labelIcon>
+            <ClapperboardIcon class="size-4" />
+          </template>
+        </UserButton.Link>
+      </UserButton.MenuItems>
+    </UserButton>
   </Show>
   <Show when="signed-out">
     <SignInButton mode="modal">

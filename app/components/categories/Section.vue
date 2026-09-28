@@ -1,6 +1,6 @@
 <script setup lang="ts">
 defineProps<{
-  categoryId: string;
+  categoryId?: string;
 }>();
 
 const router = useRouter();

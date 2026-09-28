@@ -1,9 +1,10 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: "auth",
+  layout: "studio",
+  middleware: "auth",
 });
 </script>
 
 <template>
-  <SignIn />
+  <div>Studio</div>
 </template>
