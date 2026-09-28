@@ -3,10 +3,10 @@ import { UserCircleIcon } from "@lucide/vue";
 </script>
 
 <template>
-  <SignedIn>
+  <Show when="signed-in">
     <UserButton />
-  </SignedIn>
-  <SignedOut>
+  </Show>
+  <Show when="signed-out">
     <SignInButton mode="modal">
       <Button
         variant="outline"
@@ -16,5 +16,5 @@ import { UserCircleIcon } from "@lucide/vue";
         Sign in
       </Button>
     </SignInButton>
-  </SignedOut>
+  </Show>
 </template>
