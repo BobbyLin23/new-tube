@@ -148,7 +148,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
 }
 ```
 
-Register the route in `router.ts`:
+Register the route in `index.ts`:
 
 ```typescript
 import { type RouteConfig, route, index } from '@react-router/dev/routes'
