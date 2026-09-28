@@ -11,11 +11,7 @@ import { authed } from "./base";
 export const me = authed
   .errors({ USER_NOT_FOUND: { message: "User not found" } })
   .handler(async ({ context, errors }) => {
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.clerkId, context.auth.userId))
-      .limit(1);
+    const [user] = await db.select().from(users).where(eq(users.id, context.userId)).limit(1);
 
     if (!user) {
       throw errors.USER_NOT_FOUND();
