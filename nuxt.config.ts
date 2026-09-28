@@ -7,6 +7,9 @@ export default defineNuxtConfig({
   css: ["~/assets/css/tailwind.css"],
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: ["@clerk/vue"],
+    },
   },
   modules: [
     "shadcn-nuxt",

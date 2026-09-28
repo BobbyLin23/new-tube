@@ -1,16 +1,10 @@
-import { createPlanet, findPlanet, listPlanets } from "#server/routers/planet.ts";
-import { me } from "./users";
+import { listCategories } from "~~/server/routers/categories";
 
 export { authed, base } from "./base";
 
 export const appRouter = {
-  planet: {
-    list: listPlanets,
-    find: findPlanet,
-    create: createPlanet,
-  },
-  users: {
-    me,
+  categories: {
+    list: listCategories,
   },
 };
 

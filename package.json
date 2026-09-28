@@ -14,6 +14,7 @@
     "fmt:check": "oxfmt --check",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
+    "db:seed-categories": "bun run ./scripts/seed-categories.ts",
     "dev:webhook": "npx -y clerk@latest webhooks listen --forward-to http://localhost:5011/api/webhooks"
   },
   "dependencies": {
@@ -32,6 +33,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "drizzle-orm": "1.0.0-rc.4",
+    "embla-carousel-vue": "^8.6.0",
     "nuxt": "^4.5.2",
     "pinia": "^4.0.3",
     "reka-ui": "^2.10.5",

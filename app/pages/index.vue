@@ -1,16 +1,9 @@
 <script setup lang="ts">
-const orpc = useOrpc();
-
-const { data: planets } = useQuery(orpc.planet.list.queryOptions({}));
+const route = useRoute();
 </script>
 
 <template>
-  <div>
-    Hello
-    <ul v-if="planets">
-      <li v-for="planet in planets" :key="planet.id">{{ planet.name }}</li>
-    </ul>
-    <Button>Click</Button>
-    <ModeToggle />
+  <div class="max-w-[2400px] mx-auto mb-10 px-4 pt-2.5 flex flex-col gap-y-6">
+    <CategoriesSection :categoryId="route.params.categoryId as string" />
   </div>
 </template>
