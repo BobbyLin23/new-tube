@@ -151,6 +151,30 @@
       "skillPath": "skills/shadcn-vue/SKILL.md",
       "computedHash": "99c23e506f7fa3a1b26dede8e837d067549ba2fbc339ea9030d1563c1f4badf2"
     },
+    "upstash": {
+      "source": "upstash/skills",
+      "sourceType": "github",
+      "skillPath": "skills/upstash/SKILL.md",
+      "computedHash": "807576a778d24dc514e5be1730c78af085f949309318afe64bd8a8ab89cdb3e1"
+    },
+    "upstash-ratelimit-js": {
+      "source": "upstash/skills",
+      "sourceType": "github",
+      "skillPath": "skills/upstash-ratelimit-js/SKILL.md",
+      "computedHash": "d5903c53a9b83b798f81826f7bf068ddb202ea30d7dfc462f16c8ffbcc9e4d59"
+    },
+    "upstash-redis-js": {
+      "source": "upstash/skills",
+      "sourceType": "github",
+      "skillPath": "skills/upstash-redis-js/SKILL.md",
+      "computedHash": "e1a81606ca80ab385027f39755fc099df0a764e9f1c814bf337e2f3af85c5062"
+    },
+    "upstash-redis-start": {
+      "source": "upstash/skills",
+      "sourceType": "github",
+      "skillPath": "skills/upstash-redis-start/SKILL.md",
+      "computedHash": "94dda8e7224c466317eb9a414885b330b479d33c709d8fb99de418d6524067f2"
+    },
     "vue": {
       "source": "antfu/skills",
       "sourceType": "github",
