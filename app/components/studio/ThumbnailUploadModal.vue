@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { useQueryCache } from "@pinia/colada";
 import { toast } from "vue-sonner";
-import { useOrpc } from "~/composables/useOrpc";
 
 interface ThumbnailUploadModalProps {
   videoId: string;
@@ -61,7 +59,8 @@ async function onUpload() {
     queryCache.invalidateQueries({ key: orpc.studio.getOne.key({ input: { id: props.videoId } }) });
     toast.success("Thumbnail uploaded");
     emit("update:open", false);
-  } catch {
+  } catch (error) {
+    console.error(error);
     toast.error("Something went wrong");
   } finally {
     isUploading.value = false;

@@ -192,6 +192,9 @@ write_env R2_ACCESS_KEY_ID "$R2_ACCESS_KEY_ID"
 write_env R2_SECRET_ACCESS_KEY "$R2_SECRET_ACCESS_KEY"
 note "Note: 'Use only R2 S3 tokens endpoint' tokens (jwt format) do NOT work here;"
 note "you need an Access Key ID + Secret Access Key pair."
+note "Note: 'Object Read & Write' is enough for the app, but applying the bucket"
+note "CORS policy via scripts/r2-cors.mjs needs an Admin token — or paste the"
+note "policy in the dashboard: bucket → Settings → CORS policy."
 
 # ── Stage 4: public access (optional but recommended) ─────────────────────
 stage "Public bucket URL (optional, recommended)"

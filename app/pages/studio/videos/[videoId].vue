@@ -15,7 +15,6 @@ import { toast } from "vue-sonner";
 import { snakeCaseToTitle } from "~/lib/utils";
 import { THUMBNAIL_FALLBACK } from "~/lib/constants";
 import { z } from "zod";
-import { videoUpdateSchema } from "~~/server/db/schema";
 
 definePageMeta({
   layout: "studio",
@@ -38,11 +37,19 @@ const currentCategories = computed(() =>
   })),
 );
 
-const { data: video, isLoading: videoLoading } = useQuery(
-  orpc.studio.getOne.queryOptions({
-    input: { id: videoId.value },
-  }),
-);
+const {
+  data: video,
+  isLoading: videoLoading,
+  refresh: refreshVideo,
+} = useQuery(orpc.studio.getOne.queryOptions({ input: { id: videoId.value } }));
+
+// The form captures defaultValues once, so `video` must be resolved before
+// useForm() runs. On the server the query normally resolves via
+// onServerPrefetch, i.e. AFTER setup, leaving field state stale in the SSR
+// render and causing hydration mismatches on the hidden native <select>s.
+if (import.meta.server) {
+  await refreshVideo();
+}
 
 const isThumbnailModalOpen = ref(false);
 
@@ -137,8 +144,8 @@ function isInvalid(field: any) {
 </script>
 
 <template>
+  <StudioThumbnailUploadModal v-model:open="isThumbnailModalOpen" :video-id="videoId" />
   <div class="px-4 pt-2.5 max-w-5xl">
-    <ThumbnailUploadModal v-model:open="isThumbnailModalOpen" :video-id="videoId" />
     <Suspense>
       <form @submit.prevent="form.handleSubmit">
         <div class="flex items-center justify-between mb-6">
@@ -203,7 +210,7 @@ function isInvalid(field: any) {
                 </template>
               </form.Field>
               <div
-                class="relative h-[84px] w-[153px] border border-dashed border-neutral-400 p-0.5 group"
+                class="relative h-21 w-38.25 border border-dashed border-neutral-400 p-0.5 group"
               >
                 <img
                   :src="video?.thumbnailUrl || THUMBNAIL_FALLBACK"
@@ -215,7 +222,7 @@ function isInvalid(field: any) {
                     <Button
                       type="button"
                       size="icon"
-                      class="bg-black/50 hover:bg-black/50 absolute top-1 right-1 rounded-full opacity-100 md:opacity-0 group-hover:opacity-100 duration-300 size-7"
+                      class="bg-black/50 hover:bg-black/70 absolute top-1 right-1 rounded-full opacity-100 md:opacity-0 group-hover:opacity-100 duration-300 size-7"
                     >
                       <MoreVerticalIcon class="text-white" />
                     </Button>
@@ -268,7 +275,7 @@ function isInvalid(field: any) {
             </FieldGroup>
           </div>
           <div class="flex flex-col gap-y-8 lg:col-span-2">
-            <div class="flex flex-col gap-4 bg-[#F9F9F9] rounded-xl overflow-hidden h-fit">
+            <div class="flex flex-col gap-4 bg-sidebar rounded-xl overflow-hidden h-fit">
               <div class="aspect-video overflow-hidden relative">
                 <VideoPlayer
                   :playback-id="video?.muxPlaybackId"
@@ -276,12 +283,15 @@ function isInvalid(field: any) {
                 />
               </div>
               <div class="p-4 flex flex-col gap-y-6">
-                <div class="flex justify-between items-center gap-x-2">
-                  <div class="flex flex-col gap-y-1">
+                <div class="flex items-center gap-x-2 min-w-0">
+                  <div class="flex flex-col gap-y-1 min-w-0">
                     <p class="text-muted-foreground text-xs">Video link</p>
-                    <div class="flex items-center gap-x-2">
-                      <NuxtLink :href="`/videos/${video?.id}`">
-                        <p class="line-clamp-1 text-sm text-blue-500">{{ fullUrl }}</p>
+                    <div class="flex items-center gap-x-2 min-w-0">
+                      <NuxtLink
+                        :href="`/videos/${video?.id}`"
+                        class="min-w-0 flex-1 truncate text-sm text-blue-500"
+                      >
+                        {{ fullUrl }}
                       </NuxtLink>
                       <Button
                         type="button"

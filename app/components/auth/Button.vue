@@ -5,15 +5,18 @@ import { UserCircleIcon, ClapperboardIcon } from "@lucide/vue";
 
 <template>
   <Show when="signed-in">
-    <UserButton>
-      <UserButton.MenuItems>
-        <UserButton.Link label="Studio" href="/studio">
-          <template #labelIcon>
-            <ClapperboardIcon class="size-4" />
-          </template>
-        </UserButton.Link>
-      </UserButton.MenuItems>
-    </UserButton>
+    <!-- UserButton mounts its content imperatively via Clerk JS (ClerkHostRenderer renders nothing until clerk.loaded), so SSR and hydration disagree. Render it client-only; SSR shows nothing either way. -->
+    <ClientOnly>
+      <UserButton>
+        <UserButton.MenuItems>
+          <UserButton.Link label="Studio" href="/studio">
+            <template #labelIcon>
+              <ClapperboardIcon class="size-4" />
+            </template>
+          </UserButton.Link>
+        </UserButton.MenuItems>
+      </UserButton>
+    </ClientOnly>
   </Show>
   <Show when="signed-out">
     <SignInButton mode="modal">
