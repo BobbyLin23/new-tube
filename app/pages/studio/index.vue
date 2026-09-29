@@ -14,7 +14,7 @@ definePageMeta({
     <Suspense>
       <VideosSection />
       <template #fallback>
-        <p>Loading...</p>
+        <VideosSectionSkeleton />
       </template>
     </Suspense>
   </div>

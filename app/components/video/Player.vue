@@ -1,0 +1,28 @@
+<script setup lang="ts">
+import "@mux/mux-player";
+
+interface VideoPlayerProps {
+  playbackId?: string | null | undefined;
+  thumbnailUrl?: string | null | undefined;
+  autoPlay?: boolean;
+}
+
+const props = defineProps<VideoPlayerProps>();
+
+const emit = defineEmits<{ play: [] }>();
+</script>
+
+<template>
+  <mux-player
+    :playback-id="props.playbackId ?? ''"
+    :poster="props.thumbnailUrl ?? '/placeholder.svg'"
+    :player-init-time="0"
+    :auto-play="props.autoPlay"
+    :thumbnail-time="0"
+    class="w-full h-full object-contain"
+    accent-color="#FF2056"
+    @play="emit('play')"
+  />
+</template>
+
+<style scoped></style>

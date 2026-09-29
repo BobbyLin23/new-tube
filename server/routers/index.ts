@@ -1,6 +1,6 @@
 import { listCategories } from "~~/server/routers/categories";
-import { createVideo } from "~~/server/routers/videos";
-import { listStudios } from "~~/server/routers/studio";
+import { createVideo, updateVideo, removeVideo } from "~~/server/routers/videos";
+import { listVideosInStudio, getVideoById } from "~~/server/routers/studio";
 
 export { authed, base } from "./base";
 
@@ -10,9 +10,12 @@ export const appRouter = {
   },
   videos: {
     create: createVideo,
+    update: updateVideo,
+    remove: removeVideo,
   },
   studio: {
-    list: listStudios,
+    list: listVideosInStudio,
+    getOne: getVideoById,
   },
 };
 

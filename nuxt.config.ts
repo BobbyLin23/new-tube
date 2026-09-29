@@ -32,6 +32,11 @@ export default defineNuxtConfig({
   colorMode: {
     classSuffix: "",
   },
+  runtimeConfig: {
+    public: {
+      siteUrl: "",
+    },
+  },
   devServer: {
     port: 5011,
   },

@@ -6,6 +6,8 @@ const orpc = useOrpc();
 
 const queryCache = useQueryCache();
 
+const router = useRouter();
+
 const {
   mutate: create,
   isLoading,
@@ -23,16 +25,17 @@ const {
   }),
 );
 
-const handleUploadSuccess = () => {
+const onSuccess = () => {
+  if (!data?.value?.video?.id) return;
+
   reset();
-  toast.success("Video uploaded");
-  queryCache.invalidateQueries({ key: orpc.studio.list.key() });
+  router.push(`/studio/videos/${data.value.video.id}`);
 };
 </script>
 
 <template>
   <ResponsiveModal title="Upload a video" :open="!!data?.url" @update:open="() => reset()">
-    <StudioUploader v-if="data?.url" :endpoint="data.url" @success="handleUploadSuccess" />
+    <StudioUploader v-if="data?.url" :endpoint="data.url" @success="onSuccess" />
     <LoaderCircleIcon v-else />
   </ResponsiveModal>
   <Button variant="secondary" @click="create" :disabled="isLoading">

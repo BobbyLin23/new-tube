@@ -3,8 +3,9 @@ import { z } from "zod";
 import { db } from "~~/server/db";
 import { videos } from "~~/server/db/schema";
 import { and, desc, eq, lt, or } from "drizzle-orm";
+import { ORPCError } from "@orpc/server";
 
-export const listStudios = authed
+export const listVideosInStudio = authed
   .input(
     z.object({
       cursor: z
@@ -54,4 +55,26 @@ export const listStudios = authed
       items,
       nextCursor,
     };
+  });
+
+export const getVideoById = authed
+  .input(
+    z.object({
+      id: z.uuid(),
+    }),
+  )
+  .handler(async ({ context, input }) => {
+    const { userId } = context;
+    const { id } = input;
+
+    const [video] = await db
+      .select()
+      .from(videos)
+      .where(and(eq(videos.id, id), eq(videos.userId, userId)));
+
+    if (!video) {
+      throw new ORPCError("NOT_FOUND");
+    }
+
+    return video;
   });
