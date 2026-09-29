@@ -4,11 +4,19 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag) => tag.startsWith("mux-"),
+    },
+  },
   css: ["~/assets/css/tailwind.css"],
   vite: {
     plugins: [tailwindcss()],
     optimizeDeps: {
       include: ["@clerk/vue"],
+    },
+    server: {
+      allowedHosts: ["jaybird-light-badger.ngrok-free.app"],
     },
   },
   modules: [
