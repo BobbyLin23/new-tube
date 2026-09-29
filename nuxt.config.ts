@@ -12,9 +12,6 @@ export default defineNuxtConfig({
   css: ["~/assets/css/tailwind.css"],
   vite: {
     plugins: [tailwindcss()],
-    optimizeDeps: {
-      include: ["@clerk/vue"],
-    },
     server: {
       allowedHosts: ["jaybird-light-badger.ngrok-free.app"],
     },
