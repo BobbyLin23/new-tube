@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { formatDuration } from "@/lib/utils";
+import { THUMBNAIL_FALLBACK } from "~/lib/constants";
 
 interface VideoThumbnailProps {
   title: string;
@@ -17,12 +18,12 @@ const props = defineProps<VideoThumbnailProps>();
     <div class="relative aspect-video w-full overflow-hidden rounded-xl">
       <NuxtImg
         class="h-full w-full object-cover transition-opacity group-hover:opacity-0"
-        :src="props.imageUrl ?? '/placeholder.svg'"
+        :src="props.imageUrl || THUMBNAIL_FALLBACK"
         :alt="props.title"
       />
       <NuxtImg
         class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity group-hover:opacity-100"
-        :src="props.previewUrl ?? '/placeholder.svg'"
+        :src="props.previewUrl || THUMBNAIL_FALLBACK"
         :alt="props.title"
       />
     </div>

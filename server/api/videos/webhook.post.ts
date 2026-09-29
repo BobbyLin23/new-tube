@@ -9,6 +9,7 @@ import type {
 import { db } from "~~/server/db";
 import { videos } from "~~/server/db/schema";
 import { mux } from "~~/server/utils/mux";
+import { r2StoreFromUrl } from "~~/server/utils/r2";
 import { env } from "~~/env";
 
 const SIGNING_SECRET = env.MUX_WEBHOOK_SECRET;
@@ -59,9 +60,26 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 400, statusMessage: "Missing playback ID" });
       }
 
-      const thumbnailUrl = `https://image.mux.com/${playbackId}/thumbnail.jpg`;
-      const previewUrl = `https://image.mux.com/${playbackId}/animated.gif`;
       const duration = data.duration ? Math.round(data.duration * 1000) : 0;
+
+      // Re-host Mux-generated imagery in R2 so thumbnails survive Mux
+      // playback policy changes and are served from one CDN.
+      const [thumbnail, preview] = await Promise.all([
+        r2StoreFromUrl(
+          `https://image.mux.com/${playbackId}/thumbnail.jpg`,
+          `thumbnails/${playbackId}.jpg`,
+        ).catch((error) => {
+          console.error("[mux webhook] thumbnail re-host failed", error);
+          return null;
+        }),
+        r2StoreFromUrl(
+          `https://image.mux.com/${playbackId}/animated.gif`,
+          `previews/${playbackId}.gif`,
+        ).catch((error) => {
+          console.error("[mux webhook] preview re-host failed", error);
+          return null;
+        }),
+      ]);
 
       await db
         .update(videos)
@@ -69,8 +87,10 @@ export default defineEventHandler(async (event) => {
           muxStatus: data.status,
           muxPlaybackId: playbackId,
           muxAssetId: data.id,
-          thumbnailUrl,
-          previewUrl,
+          thumbnailUrl: thumbnail?.url ?? null,
+          thumbnailKey: thumbnail?.key ?? null,
+          previewUrl: preview?.url ?? null,
+          previewKey: preview?.key ?? null,
           duration,
         })
         .where(eq(videos.muxUploadId, data.upload_id));

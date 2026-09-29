@@ -4,12 +4,16 @@ import {
   CopyCheckIcon,
   CopyIcon,
   Globe2Icon,
+  ImagePlusIcon,
   LockIcon,
   MoreVerticalIcon,
+  RotateCcwIcon,
+  SparklesIcon,
   TrashIcon,
 } from "@lucide/vue";
 import { toast } from "vue-sonner";
 import { snakeCaseToTitle } from "~/lib/utils";
+import { THUMBNAIL_FALLBACK } from "~/lib/constants";
 import { z } from "zod";
 import { videoUpdateSchema } from "~~/server/db/schema";
 
@@ -37,6 +41,23 @@ const currentCategories = computed(() =>
 const { data: video, isLoading: videoLoading } = useQuery(
   orpc.studio.getOne.queryOptions({
     input: { id: videoId.value },
+  }),
+);
+
+const isThumbnailModalOpen = ref(false);
+
+const { mutate: restoreThumbnail, isLoading: isRestoringThumbnail } = useMutation(
+  orpc.videos.restoreThumbnail.mutationOptions({
+    onSuccess: () => {
+      queryCache.invalidateQueries({ key: orpc.studio.list.key() });
+      queryCache.invalidateQueries({
+        key: orpc.studio.getOne.key({ input: { id: videoId.value } }),
+      });
+      toast.success("Thumbnail restored");
+    },
+    onError: () => {
+      toast.error("Something went wrong");
+    },
   }),
 );
 
@@ -117,6 +138,7 @@ function isInvalid(field: any) {
 
 <template>
   <div class="px-4 pt-2.5 max-w-5xl">
+    <ThumbnailUploadModal v-model:open="isThumbnailModalOpen" :video-id="videoId" />
     <Suspense>
       <form @submit.prevent="form.handleSubmit">
         <div class="flex items-center justify-between mb-6">
@@ -180,6 +202,43 @@ function isInvalid(field: any) {
                   </Field>
                 </template>
               </form.Field>
+              <div
+                class="relative h-[84px] w-[153px] border border-dashed border-neutral-400 p-0.5 group"
+              >
+                <img
+                  :src="video?.thumbnailUrl || THUMBNAIL_FALLBACK"
+                  alt="Thumbnail"
+                  class="h-full w-full object-cover"
+                />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      type="button"
+                      size="icon"
+                      class="bg-black/50 hover:bg-black/50 absolute top-1 right-1 rounded-full opacity-100 md:opacity-0 group-hover:opacity-100 duration-300 size-7"
+                    >
+                      <MoreVerticalIcon class="text-white" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" side="right">
+                    <DropdownMenuItem @click="isThumbnailModalOpen = true">
+                      <ImagePlusIcon class="size-4 mr-1" />
+                      Change
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <SparklesIcon class="size-4 mr-1" />
+                      AI-generated
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      :disabled="isRestoringThumbnail"
+                      @click="restoreThumbnail({ id: videoId })"
+                    >
+                      <RotateCcwIcon class="size-4 mr-1" />
+                      Restore
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
               <form.Field name="categoryId">
                 <template #default="{ field }">
                   <Field :data-invalid="isInvalid(field)">

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import "@mux/mux-player";
+import { THUMBNAIL_FALLBACK } from "~/lib/constants";
 
 interface VideoPlayerProps {
   playbackId?: string | null | undefined;
@@ -15,7 +16,7 @@ const emit = defineEmits<{ play: [] }>();
 <template>
   <mux-player
     :playback-id="props.playbackId ?? ''"
-    :poster="props.thumbnailUrl ?? '/placeholder.svg'"
+    :poster="props.thumbnailUrl || THUMBNAIL_FALLBACK"
     :player-init-time="0"
     :auto-play="props.autoPlay"
     :thumbnail-time="0"

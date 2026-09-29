@@ -9,6 +9,13 @@ export const env = createEnv({
     MUX_TOKEN_ID: z.string(),
     MUX_TOKEN_SECRET: z.string(),
     MUX_WEBHOOK_SECRET: z.string(),
+    R2_ACCOUNT_ID: z.string(),
+    R2_ACCESS_KEY_ID: z.string(),
+    R2_SECRET_ACCESS_KEY: z.string(),
+    R2_BUCKET_NAME: z.string(),
+    // Public CDN base URL for the R2 bucket (custom domain or r2.dev).
+    // Optional: absent URLs fall back to the Mux-hosted thumbnail.
+    R2_PUBLIC_URL: z.url().optional(),
   },
   client: {
     NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
