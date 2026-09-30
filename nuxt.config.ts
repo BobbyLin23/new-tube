@@ -1,5 +1,6 @@
 import "./env";
 import tailwindcss from "@tailwindcss/vite";
+import { shadcn } from "@clerk/ui/themes";
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
@@ -31,6 +32,11 @@ export default defineNuxtConfig({
   },
   colorMode: {
     classSuffix: "",
+  },
+  clerk: {
+    appearance: {
+      theme: shadcn,
+    },
   },
   runtimeConfig: {
     public: {

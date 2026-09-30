@@ -3,6 +3,7 @@ defineProps<{
   categoryId?: string;
 }>();
 
+const route = useRoute();
 const router = useRouter();
 
 const orpc = useOrpc();
@@ -17,15 +18,13 @@ const data = computed(() =>
 );
 
 const onSelect = (value: string | null) => {
-  const url = new URL(window.location.href);
-
   if (value) {
-    url.searchParams.set("categoryId", value);
+    router.replace({ query: { ...route.query, categoryId: value } });
   } else {
-    url.searchParams.delete("categoryId");
-  }
+    const { categoryId: _, ...rest } = route.query;
 
-  router.push(url.toString());
+    router.replace({ query: rest });
+  }
 };
 </script>
 
