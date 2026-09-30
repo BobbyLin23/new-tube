@@ -18,8 +18,8 @@ const { userId: clerkUserId } = useAuth();
         </div>
       </div>
     </NuxtLink>
-    <Button v-if="user.id === clerkUserId" variant="secondary" class="rounded-full" asChild>
-      <Link :href="`/studio/videos/${videoId}`"> Edit video </Link>
+    <Button v-if="user.clerkId === clerkUserId" variant="secondary" class="rounded-full" asChild>
+      <NuxtLink :href="`/studio/videos/${videoId}`"> Edit video </NuxtLink>
     </Button>
     <SubscriptionButton
       v-else
