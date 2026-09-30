@@ -8,13 +8,13 @@ const props = defineProps<{
 const compactViews = computed(() => {
   return Intl.NumberFormat("en", {
     notation: "compact",
-  }).format(1245023);
+  }).format(props.video.viewCount);
 });
 
 const expandedViews = computed(() => {
   return Intl.NumberFormat("en", {
     notation: "standard",
-  }).format(1245023);
+  }).format(props.video.viewCount);
 });
 
 const compactDate = computed(() => {

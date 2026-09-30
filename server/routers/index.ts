@@ -12,6 +12,7 @@ import {
   generationStatus,
 } from "~~/server/routers/videos";
 import { listVideosInStudio, getVideoById } from "~~/server/routers/studio";
+import { createVideoView } from "./videoViews";
 
 export { authed, base } from "./base";
 
@@ -35,6 +36,9 @@ export const appRouter = {
   studio: {
     list: listVideosInStudio,
     getOne: getVideoById,
+  },
+  videoViews: {
+    create: createVideoView,
   },
 };
 

@@ -1,7 +1,7 @@
 import { authed } from "~~/server/routers/base";
 import { z } from "zod";
 import { db } from "~~/server/db";
-import { users, videos } from "~~/server/db/schema";
+import { users, videos, videoViews } from "~~/server/db/schema";
 import { and, desc, eq, getColumns, lt, or } from "drizzle-orm";
 import { ORPCError } from "@orpc/server";
 
@@ -71,6 +71,7 @@ export const getVideoById = authed
       .select({
         ...getColumns(videos),
         user: getColumns(users),
+        viewCount: db.$count(videoViews, eq(videoViews.videoId, videos.id)),
       })
       .from(videos)
       .innerJoin(users, eq(videos.userId, users.id))
