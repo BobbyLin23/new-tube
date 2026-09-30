@@ -25,6 +25,7 @@ const { orientation, canScrollNext, scrollNext } = useCarousel();
 <template>
   <Button
     data-slot="carousel-next"
+    autocomplete="off"
     :disabled="!canScrollNext"
     :class="
       cn(
