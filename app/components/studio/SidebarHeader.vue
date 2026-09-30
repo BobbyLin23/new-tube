@@ -3,10 +3,11 @@ import { useSidebar } from "~/components/ui/sidebar";
 
 const { user } = useUser();
 const { state } = useSidebar();
+const isMounted = useMounted();
 </script>
 
 <template>
-  <template v-if="!user">
+  <template v-if="!isMounted || !user">
     <SidebarHeader class="flex items-center justify-center pb-4">
       <Skeleton class="size-28 rounded-full" />
       <div class="flex flex-col items-center mt-2 gap-y-2">

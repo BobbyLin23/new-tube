@@ -11,11 +11,6 @@ definePageMeta({
       <h1 class="text-2xl font-bold">Channel content</h1>
       <p class="text-xs text-muted-foreground">Manage your channel content and videos</p>
     </div>
-    <Suspense>
-      <VideosSection />
-      <template #fallback>
-        <VideosSectionSkeleton />
-      </template>
-    </Suspense>
+    <VideosSection />
   </div>
 </template>
