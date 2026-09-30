@@ -125,6 +125,9 @@ export default defineEventHandler(async (event) => {
         asset_id: string;
       };
 
+      // Audio tracks also emit this event; AI generation needs a subtitle track.
+      if (data.type !== "text" || data.text_type !== "subtitles") break;
+
       // Mux's types incorrectly omit asset_id on track payloads.
       const assetId = data.asset_id;
       const trackId = data.id;

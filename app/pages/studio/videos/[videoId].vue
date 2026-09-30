@@ -43,6 +43,7 @@ const {
   isLoading: videoLoading,
   error: videoError,
   refresh: refreshVideo,
+  refetch: refetchVideo,
 } = useQuery(orpc.studio.getOne.queryOptions({ input: { id: videoId.value } }));
 
 // The form captures defaultValues once, so `video` must be resolved before
@@ -114,14 +115,46 @@ const form = useForm({
   },
 });
 
+// Refresh each untouched field independently so background updates cannot erase edits.
 watch(video, (v) => {
-  if (v && !form.state.isDirty) {
-    form.setFieldValue("title", v.title);
-    form.setFieldValue("description", v.description ?? "");
-    form.setFieldValue("visibility", v.visibility);
-    form.setFieldValue("categoryId", v.categoryId ?? undefined);
-  }
+  if (!v) return;
+  if (!generationPending.title && !form.getFieldMeta("title")?.isDirty)
+    form.setFieldValue("title", v.title, { dontUpdateMeta: true });
+  if (!generationPending.description && !form.getFieldMeta("description")?.isDirty)
+    form.setFieldValue("description", v.description ?? "", { dontUpdateMeta: true });
+  if (!form.getFieldMeta("visibility")?.isDirty)
+    form.setFieldValue("visibility", v.visibility, { dontUpdateMeta: true });
+  if (!form.getFieldMeta("categoryId")?.isDirty)
+    form.setFieldValue("categoryId", v.categoryId ?? undefined, { dontUpdateMeta: true });
 });
+
+const transcriptReady = computed(() =>
+  Boolean(
+    video.value?.muxPlaybackId &&
+    video.value?.muxTrackId &&
+    video.value?.muxTrackStatus === "ready",
+  ),
+);
+const valuesAtGeneration = { title: "", description: "" };
+const { pending: generationPending, generate } = useVideoGeneration({
+  videoId: () => videoId.value,
+  onCompleted: async (field) => {
+    await refetchVideo(true);
+    queryCache.invalidateQueries({ key: orpc.studio.list.key() });
+    if (video.value && (form.state.values[field] ?? "") === valuesAtGeneration[field]) {
+      form.setFieldValue(field, video.value[field] ?? "");
+    } else {
+      toast.info("Your draft edits were kept", {
+        description: "The generated text was saved to the video. Reload to view it.",
+      });
+    }
+  },
+});
+
+function onGenerate(field: VideoGenerationField) {
+  valuesAtGeneration[field] = form.state.values[field] ?? "";
+  void generate(field);
+}
 
 // TODO: Change if deploying outside of localhost
 const config = useRuntimeConfig();
@@ -140,7 +173,7 @@ async function onCopy() {
   }, 2000);
 }
 
-function isInvalid(field: any) {
+function isInvalid(field: { state: { meta: { isTouched: boolean; isValid: boolean } } }) {
   return field.state.meta.isTouched && !field.state.meta.isValid;
 }
 </script>
@@ -164,7 +197,12 @@ function isInvalid(field: any) {
           <p class="text-xs text-muted-foreground">Manage your video details</p>
         </div>
         <div class="flex items-center gap-x-2">
-          <Button type="submit" :disabled="isUpdating"> Save </Button>
+          <Button
+            type="submit"
+            :disabled="isUpdating || generationPending.title || generationPending.description"
+          >
+            Save
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -186,7 +224,16 @@ function isInvalid(field: any) {
             <form.Field name="title">
               <template #default="{ field }">
                 <Field :data-invalid="isInvalid(field)">
-                  <FieldLabel :for="field.name"> Title </FieldLabel>
+                  <div class="flex items-center gap-x-2">
+                    <FieldLabel :for="field.name">Title</FieldLabel>
+                    <StudioGenerateButton
+                      field="title"
+                      :loading="generationPending.title"
+                      :disabled="isUpdating || isRemoving"
+                      :transcript-ready="transcriptReady"
+                      @generate="onGenerate('title')"
+                    />
+                  </div>
                   <Input
                     :id="field.name"
                     :name="field.name"
@@ -203,7 +250,16 @@ function isInvalid(field: any) {
             <form.Field name="description">
               <template #default="{ field }">
                 <Field :data-invalid="isInvalid(field)">
-                  <FieldLabel :for="field.name"> Description </FieldLabel>
+                  <div class="flex items-center gap-x-2">
+                    <FieldLabel :for="field.name">Description</FieldLabel>
+                    <StudioGenerateButton
+                      field="description"
+                      :loading="generationPending.description"
+                      :disabled="isUpdating || isRemoving"
+                      :transcript-ready="transcriptReady"
+                      @generate="onGenerate('description')"
+                    />
+                  </div>
                   <Textarea
                     :id="field.name"
                     :name="field.name"
@@ -240,7 +296,7 @@ function isInvalid(field: any) {
                     <ImagePlusIcon class="size-4 mr-1" />
                     Change
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem disabled title="AI thumbnail generation is not available yet">
                     <SparklesIcon class="size-4 mr-1" />
                     AI-generated
                   </DropdownMenuItem>

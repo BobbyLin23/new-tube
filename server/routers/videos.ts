@@ -4,14 +4,84 @@ import { z } from "zod";
 import { authed } from "~~/server/routers/base";
 import { db } from "~~/server/db";
 import { videos, videoUpdateSchema } from "~~/server/db/schema";
-import { mux } from "#server/utils/mux";
-import { r2Delete, r2StoreFromUrl, r2Url, r2PutSignedUrl } from "#server/utils/r2";
+import { mux } from "~~/server/utils/mux";
+import { r2Delete, r2StoreFromUrl, r2Url, r2PutSignedUrl } from "~~/server/utils/r2";
+import { generationLabel, getWorkflowClient, getWorkflowConfig } from "~~/server/utils/workflow";
+
+function createGenerationProcedure(field: VideoGenerationField) {
+  return authed.input(z.object({ id: z.uuid() })).handler(async ({ context, input }) => {
+    const [video] = await db
+      .select()
+      .from(videos)
+      .where(and(eq(videos.id, input.id), eq(videos.userId, context.userId)));
+    if (!video) throw new ORPCError("NOT_FOUND");
+    if (!video.muxPlaybackId || !video.muxTrackId || video.muxTrackStatus !== "ready") {
+      throw new ORPCError("BAD_REQUEST", { message: "Wait for the video subtitles to be ready" });
+    }
+
+    let config: ReturnType<typeof getWorkflowConfig>;
+    try {
+      config = getWorkflowConfig();
+    } catch {
+      throw new ORPCError("SERVICE_UNAVAILABLE", { message: "AI generation is not configured" });
+    }
+    const { workflowRunId } = await getWorkflowClient().trigger({
+      url: `${config.UPSTASH_WORKFLOW_URL.replace(/\/$/, "")}/api/videos/workflows/${field}`,
+      body: { userId: context.userId, videoId: video.id, originalValue: video[field] },
+      label: generationLabel(context.userId, video.id),
+      retries: 3,
+    });
+    return { workflowRunId };
+  });
+}
+
+export const generateTitle = createGenerationProcedure("title");
+export const generateDescription = createGenerationProcedure("description");
+
+export const generationStatus = authed
+  .input(
+    z.object({
+      id: z.uuid(),
+      workflowRunId: z.string().min(1).max(200),
+    }),
+  )
+  .handler(async ({ context, input }) => {
+    const [video] = await db
+      .select({ id: videos.id })
+      .from(videos)
+      .where(and(eq(videos.id, input.id), eq(videos.userId, context.userId)));
+    if (!video) throw new ORPCError("NOT_FOUND");
+    const label = generationLabel(context.userId, video.id);
+    const { runs } = await getWorkflowClient().logs({
+      filter: { workflowRunId: input.workflowRunId, label },
+      count: 1,
+    });
+    const run = runs.find(
+      (run) =>
+        run.workflowRunId === input.workflowRunId &&
+        (run.labels?.includes(label) || run.label === label),
+    );
+    if (!run) return { status: "pending" as const };
+    if (run.workflowState === "RUN_SUCCESS") {
+      const result = z
+        .object({ applied: z.boolean() })
+        .safeParse(JSON.parse(run.workflowRunResponse || "null"));
+      return {
+        status:
+          result.success && !result.data.applied ? ("skipped" as const) : ("completed" as const),
+      };
+    }
+    if (run.workflowState === "RUN_FAILED" || run.workflowState === "RUN_CANCELED")
+      return { status: "failed" as const };
+    return { status: "pending" as const };
+  });
 
 export const createVideo = authed.handler(async ({ context }) => {
   const upload = await mux.video.uploads.create({
     new_asset_settings: {
       passthrough: context.userId,
       playback_policy: ["public"],
+      inputs: [{ generated_subtitles: [{ language_code: "en", name: "English" }] }],
     },
     cors_origin: "*", // TODO: In production, set to your url
   });

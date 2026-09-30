@@ -6,6 +6,9 @@ import {
   restoreThumbnail,
   uploadThumbnailUrl,
   setThumbnail,
+  generateTitle,
+  generateDescription,
+  generationStatus,
 } from "~~/server/routers/videos";
 import { listVideosInStudio, getVideoById } from "~~/server/routers/studio";
 
@@ -22,6 +25,9 @@ export const appRouter = {
     restoreThumbnail,
     uploadThumbnailUrl,
     setThumbnail,
+    generateTitle,
+    generateDescription,
+    generationStatus,
   },
   studio: {
     list: listVideosInStudio,
