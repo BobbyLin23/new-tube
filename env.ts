@@ -20,6 +20,10 @@ export const env = createEnv({
     // Optional until AI generation is enabled; checked together when starting a job.
     DEEPSEEK_API_KEY: z.string().min(1).optional(),
     DEEPSEEK_MODEL: z.enum(["deepseek-flash", "deepseek-v4-pro"]).default("deepseek-flash"),
+    MINIMAX_API_KEY: z.string().min(1).optional(),
+    MINIMAX_API_HOST: z
+      .enum(["https://api.minimax.cn", "https://api.minimaxi.com"])
+      .default("https://api.minimax.cn"),
     QSTASH_TOKEN: z.string().min(1).optional(),
     QSTASH_CURRENT_SIGNING_KEY: z.string().min(1).optional(),
     QSTASH_NEXT_SIGNING_KEY: z.string().min(1).optional(),

@@ -6,7 +6,12 @@ import { db } from "~~/server/db";
 import { videos, videoUpdateSchema } from "~~/server/db/schema";
 import { mux } from "~~/server/utils/mux";
 import { r2Delete, r2StoreFromUrl, r2Url, r2PutSignedUrl } from "~~/server/utils/r2";
-import { generationLabel, getWorkflowClient, getWorkflowConfig } from "~~/server/utils/workflow";
+import {
+  generationLabel,
+  getWorkflowClient,
+  getWorkflowConfig,
+  getThumbnailGenerationConfig,
+} from "~~/server/utils/workflow";
 
 function createGenerationProcedure(field: VideoGenerationField) {
   return authed.input(z.object({ id: z.uuid() })).handler(async ({ context, input }) => {
@@ -37,6 +42,37 @@ function createGenerationProcedure(field: VideoGenerationField) {
 
 export const generateTitle = createGenerationProcedure("title");
 export const generateDescription = createGenerationProcedure("description");
+
+export const generateThumbnail = authed
+  .input(z.object({ id: z.uuid(), prompt: thumbnailPromptSchema }))
+  .handler(async ({ context, input }) => {
+    const [video] = await db
+      .select()
+      .from(videos)
+      .where(and(eq(videos.id, input.id), eq(videos.userId, context.userId)));
+    if (!video) throw new ORPCError("NOT_FOUND");
+    let config: ReturnType<typeof getThumbnailGenerationConfig>;
+    try {
+      config = getThumbnailGenerationConfig();
+    } catch {
+      throw new ORPCError("SERVICE_UNAVAILABLE", {
+        message: "Thumbnail generation requires MiniMax, QStash, and an R2 public URL",
+      });
+    }
+    const { workflowRunId } = await getWorkflowClient().trigger({
+      url: `${config.UPSTASH_WORKFLOW_URL.replace(/\/$/, "")}/api/videos/workflows/thumbnail`,
+      body: {
+        userId: context.userId,
+        videoId: video.id,
+        prompt: input.prompt,
+        originalKey: video.thumbnailKey,
+        originalUrl: video.thumbnailUrl,
+      },
+      label: generationLabel(context.userId, video.id),
+      retries: 3,
+    });
+    return { workflowRunId };
+  });
 
 export const generationStatus = authed
   .input(

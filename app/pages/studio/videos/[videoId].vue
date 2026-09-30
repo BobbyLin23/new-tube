@@ -55,6 +55,7 @@ if (import.meta.server) {
 }
 
 const isThumbnailModalOpen = ref(false);
+const isThumbnailGenerateModalOpen = ref(false);
 
 const { mutate: restoreThumbnail, isLoading: isRestoringThumbnail } = useMutation(
   orpc.videos.restoreThumbnail.mutationOptions({
@@ -141,6 +142,7 @@ const { pending: generationPending, generate } = useVideoGeneration({
   onCompleted: async (field) => {
     await refetchVideo(true);
     queryCache.invalidateQueries({ key: orpc.studio.list.key() });
+    if (field === "thumbnail") return;
     if (video.value && (form.state.values[field] ?? "") === valuesAtGeneration[field]) {
       form.setFieldValue(field, video.value[field] ?? "");
     } else {
@@ -154,6 +156,10 @@ const { pending: generationPending, generate } = useVideoGeneration({
 function onGenerate(field: VideoGenerationField) {
   valuesAtGeneration[field] = form.state.values[field] ?? "";
   void generate(field);
+}
+
+function onGenerateThumbnail(prompt: string) {
+  return generate("thumbnail", prompt);
 }
 
 // TODO: Change if deploying outside of localhost
@@ -180,10 +186,13 @@ function isInvalid(field: { state: { meta: { isTouched: boolean; isValid: boolea
 
 <template>
   <StudioThumbnailUploadModal v-model:open="isThumbnailModalOpen" :video-id="videoId" />
+  <StudioThumbnailGenerateModal
+    v-model:open="isThumbnailGenerateModalOpen"
+    :loading="generationPending.thumbnail"
+    :submit="onGenerateThumbnail"
+  />
   <div class="px-4 pt-2.5 max-w-5xl">
-    <p v-if="videoPending" role="status" class="text-sm text-muted-foreground">
-      Loading video details...
-    </p>
+    <StudioVideoDetailsSkeleton v-if="videoPending" />
     <div v-else-if="videoError && !video" role="alert" class="space-y-3">
       <p class="text-sm text-destructive">Unable to load video details.</p>
       <Button type="button" variant="outline" :disabled="videoLoading" @click="refreshVideo()">
@@ -292,16 +301,22 @@ function isInvalid(field: { state: { meta: { isTouched: boolean; isValid: boolea
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" side="right">
-                  <DropdownMenuItem @click="isThumbnailModalOpen = true">
+                  <DropdownMenuItem
+                    :disabled="generationPending.thumbnail || isRestoringThumbnail"
+                    @click="isThumbnailModalOpen = true"
+                  >
                     <ImagePlusIcon class="size-4 mr-1" />
                     Change
                   </DropdownMenuItem>
-                  <DropdownMenuItem disabled title="AI thumbnail generation is not available yet">
+                  <DropdownMenuItem
+                    :disabled="generationPending.thumbnail || isRestoringThumbnail || isRemoving"
+                    @click="isThumbnailGenerateModalOpen = true"
+                  >
                     <SparklesIcon class="size-4 mr-1" />
-                    AI-generated
+                    {{ generationPending.thumbnail ? "Generating..." : "AI-generated" }}
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    :disabled="isRestoringThumbnail"
+                    :disabled="isRestoringThumbnail || generationPending.thumbnail"
                     @click="restoreThumbnail({ id: videoId })"
                   >
                     <RotateCcwIcon class="size-4 mr-1" />
@@ -310,6 +325,13 @@ function isInvalid(field: { state: { meta: { isTouched: boolean; isValid: boolea
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+            <p
+              v-if="generationPending.thumbnail"
+              role="status"
+              class="text-xs text-muted-foreground"
+            >
+              Generating your thumbnail. This may take a few minutes.
+            </p>
             <form.Field name="categoryId">
               <template #default="{ field }">
                 <Field :data-invalid="isInvalid(field)">

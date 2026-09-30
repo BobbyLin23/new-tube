@@ -2,11 +2,11 @@ import { toast } from "vue-sonner";
 
 export function useVideoGeneration(options: {
   videoId: () => string;
-  onCompleted: (field: VideoGenerationField) => Promise<void>;
+  onCompleted: (field: VideoGenerationKind) => Promise<void>;
 }) {
   const orpc = useOrpc();
-  const pending = reactive({ title: false, description: false });
-  const timers = new Map<VideoGenerationField, ReturnType<typeof setTimeout>>();
+  const pending = reactive({ title: false, description: false, thumbnail: false });
+  const timers = new Map<VideoGenerationKind, ReturnType<typeof setTimeout>>();
   let disposed = false;
 
   onScopeDispose(() => {
@@ -15,18 +15,21 @@ export function useVideoGeneration(options: {
     timers.clear();
   });
 
-  async function generate(field: VideoGenerationField) {
-    if (pending[field]) return;
+  async function generate(field: VideoGenerationKind, prompt?: string) {
+    if (pending[field]) return false;
     pending[field] = true;
     const id = options.videoId();
     const startedAt = Date.now();
     try {
-      const procedure =
-        field === "title" ? orpc.videos.generateTitle : orpc.videos.generateDescription;
-      const { workflowRunId } = await procedure.call({ id });
+      const { workflowRunId } =
+        field === "thumbnail"
+          ? await orpc.videos.generateThumbnail.call({ id, prompt: prompt ?? "" })
+          : await (
+              field === "title" ? orpc.videos.generateTitle : orpc.videos.generateDescription
+            ).call({ id });
       if (disposed) return;
       toast.success("Background job started", {
-        description: "Your generated text will appear when it is ready.",
+        description: `Your generated ${field === "thumbnail" ? "thumbnail" : "text"} will appear when it is ready.`,
       });
 
       async function poll() {
@@ -37,7 +40,9 @@ export function useVideoGeneration(options: {
           if (status === "completed") {
             await options.onCompleted(field);
             pending[field] = false;
-            toast.success(`${field === "title" ? "Title" : "Description"} generated`);
+            toast.success(
+              `${field === "title" ? "Title" : field === "description" ? "Description" : "Thumbnail"} generated`,
+            );
             return;
           }
           if (status === "failed" || status === "skipped") {
@@ -62,9 +67,11 @@ export function useVideoGeneration(options: {
         timers.set(field, setTimeout(poll, 3_000));
       }
       timers.set(field, setTimeout(poll, 3_000));
+      return true;
     } catch (error) {
       pending[field] = false;
       toast.error(error instanceof Error ? error.message : "Unable to start generation");
+      return false;
     }
   }
 
