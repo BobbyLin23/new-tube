@@ -1,8 +1,8 @@
 import { authed } from "~~/server/routers/base";
 import { z } from "zod";
 import { db } from "~~/server/db";
-import { users, videos, videoViews } from "~~/server/db/schema";
-import { and, desc, eq, getColumns, lt, or } from "drizzle-orm";
+import { users, videoReactions, videos, videoViews } from "~~/server/db/schema";
+import { and, desc, eq, getColumns, inArray, lt, or } from "drizzle-orm";
 import { ORPCError } from "@orpc/server";
 
 export const listVideosInStudio = authed
@@ -64,22 +64,55 @@ export const getVideoById = authed
     }),
   )
   .handler(async ({ context, input }) => {
-    const { userId } = context;
-    const { id } = input;
+    const { clerkUserId } = context;
 
-    const [video] = await db
+    let userId;
+
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(inArray(users.clerkId, clerkUserId ? [clerkUserId] : []));
+
+    if (user) {
+      userId = user.id;
+    }
+
+    const viewerReactions = db.$with("viewer_reactions").as(
+      db
+        .select({
+          videoId: videoReactions.videoId,
+          type: videoReactions.type,
+        })
+        .from(videoReactions)
+        .where(inArray(videoReactions.userId, userId ? [userId] : [])),
+    );
+
+    const [existingVideo] = await db
+      .with(viewerReactions)
       .select({
         ...getColumns(videos),
-        user: getColumns(users),
+        user: {
+          ...getColumns(users),
+        },
         viewCount: db.$count(videoViews, eq(videoViews.videoId, videos.id)),
+        likeCount: db.$count(
+          videoReactions,
+          and(eq(videoReactions.videoId, videos.id), eq(videoReactions.type, "like")),
+        ),
+        dislikeCount: db.$count(
+          videoReactions,
+          and(eq(videoReactions.videoId, videos.id), eq(videoReactions.type, "dislike")),
+        ),
+        viewerReaction: viewerReactions.type,
       })
       .from(videos)
       .innerJoin(users, eq(videos.userId, users.id))
-      .where(and(eq(videos.id, id), eq(videos.userId, userId)));
+      .leftJoin(viewerReactions, eq(viewerReactions.videoId, videos.id))
+      .where(eq(videos.id, input.id));
 
-    if (!video) {
+    if (!existingVideo) {
       throw new ORPCError("NOT_FOUND");
     }
 
-    return video;
+    return existingVideo;
   });

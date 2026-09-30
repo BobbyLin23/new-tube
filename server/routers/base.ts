@@ -43,5 +43,5 @@ export const authed = base.use(async ({ context, next }) => {
     throw new ORPCError("NOT_FOUND", { message: "User record not found" });
   }
 
-  return next({ context: { userId: user.id } });
+  return next({ context: { userId: user.id, clerkUserId: auth.userId } });
 });

@@ -13,6 +13,7 @@ import {
 } from "~~/server/routers/videos";
 import { listVideosInStudio, getVideoById } from "~~/server/routers/studio";
 import { createVideoView } from "./videoViews";
+import { dislikeVideo, likeVideo } from "./video-reactions";
 
 export { authed, base } from "./base";
 
@@ -39,6 +40,10 @@ export const appRouter = {
   },
   videoViews: {
     create: createVideoView,
+  },
+  videoReactions: {
+    like: likeVideo,
+    dislike: dislikeVideo,
   },
 };
 
