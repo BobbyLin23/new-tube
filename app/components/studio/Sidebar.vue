@@ -10,20 +10,20 @@ const route = useRoute();
         <SidebarMenu>
           <StudioSidebarHeader />
           <SidebarMenuItem>
-            <SidebarMenuButton :is-active="route.path === '/studio'" tooltip="Exit studio" asChild>
-              <Link href="/studio">
+            <SidebarMenuButton :is-active="route.path === '/studio'" tooltip="Content" asChild>
+              <NuxtLink href="/studio">
                 <VideoIcon class="size-5" />
                 <span class="text-sm">Content</span>
-              </Link>
+              </NuxtLink>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <Separator />
           <SidebarMenuItem>
             <SidebarMenuButton tooltip="Exit studio" asChild>
-              <Link href="/">
+              <NuxtLink href="/">
                 <LogOutIcon class="size-5" />
                 <span class="text-sm">Exit studio</span>
-              </Link>
+              </NuxtLink>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

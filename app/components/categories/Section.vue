@@ -3,11 +3,12 @@ defineProps<{
   categoryId?: string;
 }>();
 
+const route = useRoute();
 const router = useRouter();
 
 const orpc = useOrpc();
 
-const { data: categories } = useQuery(orpc.categories.list.queryOptions());
+const { data: categories, isLoading } = useQuery(orpc.categories.list.queryOptions());
 
 const data = computed(() =>
   (categories.value || []).map((category) => ({
@@ -17,23 +18,21 @@ const data = computed(() =>
 );
 
 const onSelect = (value: string | null) => {
-  const url = new URL(window.location.href);
-
   if (value) {
-    url.searchParams.set("categoryId", value);
+    router.replace({ query: { ...route.query, categoryId: value } });
   } else {
-    url.searchParams.delete("categoryId");
-  }
+    const { categoryId: _, ...rest } = route.query;
 
-  router.push(url.toString());
+    router.replace({ query: rest });
+  }
 };
 </script>
 
 <template>
-  <Suspense>
+  <template v-if="!isLoading">
     <FilterCarousel :data="data" @select="onSelect" :value="categoryId" />
-    <template #fallback>
-      <FilterCarousel isLoading :data="[]" @select="() => {}" />
-    </template>
-  </Suspense>
+  </template>
+  <template v-else>
+    <FilterCarousel isLoading :data="[]" @select="() => {}" />
+  </template>
 </template>

@@ -3,7 +3,7 @@
 <template>
   <nav class="fixed top-0 left-0 right-0 h-16 bg-background flex items-center px-2 pr-5 z-50">
     <div class="flex items-center gap-4 w-full">
-      <div class="flex items-center shrink-0">
+      <div class="flex items-center shrink-0 pl-0.5">
         <SidebarTrigger />
         <NuxtLink href="/">
           <div class="p-4 flex items-center gap-1">

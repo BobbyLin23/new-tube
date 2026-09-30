@@ -10,6 +10,7 @@ defineProps<{
   }>;
   value?: string | null;
 }>();
+
 defineEmits<{
   select: [value: string | null];
 }>();
@@ -39,7 +40,7 @@ watchOnce(api, (api) => {
     <div
       :class="
         cn(
-          'absolute left-12 top-0 bottom-0 w-12 z-10 bg-linear-to-r from-white to-transparent pointer-events-none',
+          'absolute left-12 top-0 bottom-0 w-12 z-10 bg-linear-to-r from-background to-transparent pointer-events-none',
           current === 1 && 'hidden',
         )
       "
@@ -94,7 +95,7 @@ watchOnce(api, (api) => {
     <div
       :class="
         cn(
-          'absolute right-12 top-0 bottom-0 w-12 z-10 bg-linear-to-l from-white to-transparent pointer-events-none',
+          'absolute right-12 top-0 bottom-0 w-12 z-10 bg-linear-to-l from-background to-transparent pointer-events-none',
           current === count && 'hidden',
         )
       "

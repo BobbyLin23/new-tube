@@ -25,6 +25,7 @@ const { orientation, canScrollPrev, scrollPrev } = useCarousel();
 <template>
   <Button
     data-slot="carousel-previous"
+    autocomplete="off"
     :disabled="!canScrollPrev"
     :class="
       cn(

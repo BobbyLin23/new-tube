@@ -8,7 +8,7 @@ const orpc = useOrpc();
 
 type StudioCursor = { id: string; updatedAt: Date };
 
-const { data, hasNextPage, loadNextPage } = useInfiniteQuery(() =>
+const { data, hasNextPage, loadNextPage, isPending } = useInfiniteQuery(() =>
   orpc.studio.list.infiniteOptions<StudioCursor | undefined>({
     input: (cursor) => ({ limit: DEFAULT_LIMIT, cursor }),
     initialPageParam: undefined,
@@ -35,7 +35,8 @@ const videos = computed(() => {
 </script>
 
 <template>
-  <div>
+  <VideosSectionSkeleton v-if="isPending" />
+  <div v-else>
     <div class="border-y">
       <Table>
         <TableHeader>

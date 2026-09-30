@@ -8,7 +8,7 @@ import { RiSearchLine } from "@remixicon/vue";
       <input
         type="text"
         placeholder="Search"
-        class="w-full pl-4 py-2 pr-12 rounded-l-full border focus:outline-none focus:border-blue-500"
+        class="w-full pl-4 py-2 pr-12 rounded-l-full border focus:outline-none focus:border-blue-500 focus:inset-ring-1 focus:inset-ring-blue-500"
       />
     </div>
     <button
