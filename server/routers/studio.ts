@@ -1,8 +1,8 @@
 import { authed } from "~~/server/routers/base";
 import { z } from "zod";
 import { db } from "~~/server/db";
-import { videos } from "~~/server/db/schema";
-import { and, desc, eq, lt, or } from "drizzle-orm";
+import { users, videos } from "~~/server/db/schema";
+import { and, desc, eq, getColumns, lt, or } from "drizzle-orm";
 import { ORPCError } from "@orpc/server";
 
 export const listVideosInStudio = authed
@@ -68,8 +68,12 @@ export const getVideoById = authed
     const { id } = input;
 
     const [video] = await db
-      .select()
+      .select({
+        ...getColumns(videos),
+        user: getColumns(users),
+      })
       .from(videos)
+      .innerJoin(users, eq(videos.userId, users.id))
       .where(and(eq(videos.id, id), eq(videos.userId, userId)));
 
     if (!video) {

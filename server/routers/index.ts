@@ -23,6 +23,7 @@ export const appRouter = {
     create: createVideo,
     update: updateVideo,
     remove: removeVideo,
+    getOne: getVideoById,
     restoreThumbnail,
     uploadThumbnailUrl,
     setThumbnail,
