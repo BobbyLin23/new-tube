@@ -16,7 +16,7 @@ const videoId = computed(() => route.params.videoId as string);
         <div class="xl:hidden block mt-4">
           <SuggestionsSection />
         </div>
-        <CommentsSection />
+        <CommentsSection :videoId="videoId" />
       </div>
       <div class="hidden xl:block w-full xl:w-95 2xl:w-115 shrink">
         <SuggestionsSection />

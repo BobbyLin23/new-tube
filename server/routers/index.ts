@@ -14,6 +14,7 @@ import {
 import { listVideosInStudio, getVideoById } from "~~/server/routers/studio";
 import { createVideoView } from "./videoViews";
 import { dislikeVideo, likeVideo } from "./video-reactions";
+import { createComment, listComments } from "./comments";
 import { removeSubscription, subscribeUser } from "./subscriptions";
 
 export { authed, base } from "./base";
@@ -45,6 +46,10 @@ export const appRouter = {
   videoReactions: {
     like: likeVideo,
     dislike: dislikeVideo,
+  },
+  comments: {
+    create: createComment,
+    getMany: listComments,
   },
   subscriptions: {
     create: subscribeUser,

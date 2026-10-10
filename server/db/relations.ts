@@ -66,4 +66,14 @@ export const relations = defineRelations(schema, (r) => ({
       alias: "subscriptions_creator_id_fkey",
     }),
   },
+  comments: {
+    user: r.one.users({
+      from: r.comments.userId,
+      to: r.users.id,
+    }),
+    video: r.one.videos({
+      from: r.comments.videoId,
+      to: r.videos.id,
+    }),
+  },
 }));
