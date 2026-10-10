@@ -19,9 +19,7 @@ const value = ref("");
 const { mutate, isLoading } = useMutation(
   orpc.comments.create.mutationOptions({
     onSuccess: () => {
-      queryCache.invalidateQueries({
-        key: orpc.comments.getMany.key({ input: { videoId: props.videoId } }),
-      });
+      queryCache.invalidateQueries({ key: orpc.comments.getMany.key() });
       value.value = "";
       toast.success("Comment added");
       emit("success");
