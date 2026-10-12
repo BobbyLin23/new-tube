@@ -14,12 +14,12 @@ const videoId = computed(() => route.params.videoId as string);
       <div class="flex-1 min-w-0">
         <VideoSection :videoId="videoId" />
         <div class="xl:hidden block mt-4">
-          <SuggestionsSection />
+          <SuggestionsSection :videoId="videoId" isManual />
         </div>
         <CommentsSection :videoId="videoId" />
       </div>
       <div class="hidden xl:block w-full xl:w-95 2xl:w-115 shrink">
-        <SuggestionsSection />
+        <SuggestionsSection :videoId="videoId" />
       </div>
     </div>
   </div>

@@ -16,6 +16,7 @@ import { createVideoView } from "./videoViews";
 import { dislikeVideo, likeVideo } from "./video-reactions";
 import { dislikeComment, likeComment } from "./comment-reactions";
 import { createComment, listComments, removeComment } from "./comments";
+import { listSuggestions } from "./suggestions";
 import { removeSubscription, subscribeUser } from "./subscriptions";
 
 export { authed, base } from "./base";
@@ -56,6 +57,9 @@ export const appRouter = {
     create: createComment,
     remove: removeComment,
     getMany: listComments,
+  },
+  suggestions: {
+    getMany: listSuggestions,
   },
   subscriptions: {
     create: subscribeUser,
