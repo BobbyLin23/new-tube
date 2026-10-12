@@ -6,6 +6,7 @@ export const relations = defineRelations(schema, (r) => ({
     videos: r.many.videos(),
     videoReviews: r.many.videoViews(),
     videoReactions: r.many.videoReactions(),
+    commentReactions: r.many.commentReactions(),
     subscriptions: r.many.subscriptions({
       alias: "subscriptions_viewer_id_fkey",
     }),
@@ -74,6 +75,20 @@ export const relations = defineRelations(schema, (r) => ({
     video: r.one.videos({
       from: r.comments.videoId,
       to: r.videos.id,
+    }),
+    reactions: r.many.commentReactions({
+      from: r.comments.id,
+      to: r.commentReactions.commentId,
+    }),
+  },
+  commentReactions: {
+    user: r.one.users({
+      from: r.commentReactions.userId,
+      to: r.users.id,
+    }),
+    comment: r.one.comments({
+      from: r.commentReactions.commentId,
+      to: r.comments.id,
     }),
   },
 }));

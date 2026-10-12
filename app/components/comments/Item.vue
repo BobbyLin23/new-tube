@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { formatDistanceToNow } from "date-fns";
-import { MessageSquareIcon, MoreVerticalIcon, Trash2Icon } from "@lucide/vue";
+import {
+  MessageSquareIcon,
+  MoreVerticalIcon,
+  ThumbsDownIcon,
+  ThumbsUpIcon,
+  Trash2Icon,
+} from "@lucide/vue";
 import { toast } from "vue-sonner";
+import { cn } from "~/lib/utils";
 
 const props = defineProps<{
   comment: CommentsGetManyOutput["items"][number];
@@ -28,6 +35,25 @@ const { mutate: remove, isLoading: isRemoving } = useMutation(
     },
   }),
 );
+
+function useReaction(procedure: typeof orpc.commentReactions.like) {
+  return useMutation(
+    procedure.mutationOptions({
+      onSuccess: () => {
+        queryCache.invalidateQueries({ key: orpc.comments.getMany.key() });
+      },
+      onError: (error) => {
+        toast.error("Something went wrong");
+        if ("code" in error && error.code === "UNAUTHORIZED") {
+          clerk.value?.openSignIn();
+        }
+      },
+    }),
+  );
+}
+
+const { mutate: like, isLoading: isLiking } = useReaction(orpc.commentReactions.like);
+const { mutate: dislike, isLoading: isDisliking } = useReaction(orpc.commentReactions.dislike);
 </script>
 
 <template>
@@ -43,6 +69,34 @@ const { mutate: remove, isLoading: isRemoving } = useMutation(
         </div>
       </NuxtLink>
       <p class="text-sm whitespace-pre-wrap wrap-break-word">{{ comment.value }}</p>
+      <div class="mt-1 flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          class="size-8"
+          aria-label="Like comment"
+          :disabled="isLiking || isDisliking"
+          @click="like({ commentId: comment.id })"
+        >
+          <ThumbsUpIcon
+            :class="cn(comment.viewerReaction === 'like' && 'fill-black dark:fill-white')"
+          />
+        </Button>
+        <span class="text-xs text-muted-foreground">{{ comment.likeCount }}</span>
+        <Button
+          variant="ghost"
+          size="icon"
+          class="size-8"
+          aria-label="Dislike comment"
+          :disabled="isLiking || isDisliking"
+          @click="dislike({ commentId: comment.id })"
+        >
+          <ThumbsDownIcon
+            :class="cn(comment.viewerReaction === 'dislike' && 'fill-black dark:fill-white')"
+          />
+        </Button>
+        <span class="text-xs text-muted-foreground">{{ comment.dislikeCount }}</span>
+      </div>
     </div>
     <DropdownMenu :modal="false">
       <DropdownMenuTrigger asChild>

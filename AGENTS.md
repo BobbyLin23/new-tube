@@ -30,6 +30,7 @@ Nuxt 4 source layout:
 - Icons: `@lucide/vue` (`@lucide/vue` default) and `@remixicon/vue` — both present; `<script setup lang="ts">` for Vue SFCs; `tw-animate-css` utilities available in Tailwind.
 - shadcn-vue: `style: "new-york"`, Tailwind **v4 CSS-first** (`app/assets/css/tailwind.css`, `@theme` variables, colorMode classSuffix empty). Follow existing components in `app/components/ui/` before adding new ones via the shadcn CLI.
 - Drizzle: stay on drizzle-orm API (`db.select().from(...)`, `db.insert(...).values(...)`); schema files use `pgTable` + index helpers returning arrays, not objects.
+- Vue components: build dynamic/conditional classes with `cn(...)` from `~/lib/utils` (e.g. `:class="cn('size-5', active && 'fill-black')"`), not object/array `:class` syntax.
 - Oxlint (`.oxlintrc.json`) must pass: no `any` leaks, no unused vars, etc.
 - Oxfmt (`fmt`) before delivery; one declaration per line convention used in schema (eslintrc-style arrays).
 - Any file change to `env.ts` or `server/db/*` requires running the related generator (`drizzle-kit`) so migration files stay in sync.
