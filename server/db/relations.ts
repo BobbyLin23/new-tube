@@ -76,6 +76,16 @@ export const relations = defineRelations(schema, (r) => ({
       from: r.comments.videoId,
       to: r.videos.id,
     }),
+    parent: r.one.comments({
+      from: r.comments.parentId,
+      to: r.comments.id,
+      alias: "comments_parent_id_fkey",
+    }),
+    replies: r.many.comments({
+      from: r.comments.id,
+      to: r.comments.parentId,
+      alias: "comments_parent_id_fkey",
+    }),
     reactions: r.many.commentReactions({
       from: r.comments.id,
       to: r.commentReactions.commentId,

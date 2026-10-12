@@ -1,5 +1,17 @@
 import z from "zod";
-import { and, count, desc, eq, getColumns, inArray, lt, or } from "drizzle-orm";
+import {
+  and,
+  count,
+  desc,
+  eq,
+  getColumns,
+  inArray,
+  isNotNull,
+  isNull,
+  lt,
+  or,
+  sql,
+} from "drizzle-orm";
 import { ORPCError } from "@orpc/server";
 import { authed, base } from "./base";
 import { db } from "../db";
@@ -9,13 +21,32 @@ export const createComment = authed
   .input(
     z.object({
       videoId: z.uuid(),
+      parentId: z.uuid().nullish(),
       value: z.string().trim().min(1).max(2000),
     }),
   )
   .handler(async ({ input, context }) => {
+    const { parentId, videoId, value } = input;
+
+    if (parentId) {
+      const [parent] = await db
+        .select({ parentId: comments.parentId, videoId: comments.videoId })
+        .from(comments)
+        .where(eq(comments.id, parentId));
+
+      if (!parent || parent.videoId !== videoId) {
+        throw new ORPCError("NOT_FOUND");
+      }
+
+      // Only one level of nesting is supported
+      if (parent.parentId) {
+        throw new ORPCError("BAD_REQUEST");
+      }
+    }
+
     const [createdComment] = await db
       .insert(comments)
-      .values({ userId: context.userId, videoId: input.videoId, value: input.value })
+      .values({ userId: context.userId, videoId, parentId, value })
       .returning();
 
     return createdComment;
@@ -44,6 +75,7 @@ export const listComments = base
   .input(
     z.object({
       videoId: z.uuid(),
+      parentId: z.uuid().nullish(),
       cursor: z
         .object({
           id: z.uuid(),
@@ -54,7 +86,7 @@ export const listComments = base
     }),
   )
   .handler(async ({ input, context }) => {
-    const { videoId, cursor, limit } = input;
+    const { videoId, parentId, cursor, limit } = input;
     const clerkUserId = context.getAuth?.()?.userId;
 
     let viewerId: string | undefined;
@@ -78,14 +110,26 @@ export const listComments = base
         .where(inArray(commentReactions.userId, viewerId ? [viewerId] : [])),
     );
 
+    const replies = db.$with("replies").as(
+      db
+        .select({
+          parentId: comments.parentId,
+          count: count(comments.id).as("count"),
+        })
+        .from(comments)
+        .where(and(eq(comments.videoId, videoId), isNotNull(comments.parentId)))
+        .groupBy(comments.parentId),
+    );
+
     const [[total], data] = await Promise.all([
       db.select({ count: count() }).from(comments).where(eq(comments.videoId, videoId)),
       db
-        .with(viewerReactions)
+        .with(viewerReactions, replies)
         .select({
           ...getColumns(comments),
           user: users,
           viewerReaction: viewerReactions.type,
+          replyCount: sql<number>`coalesce(${replies.count}, 0)`.mapWith(Number),
           likeCount: db.$count(
             commentReactions,
             and(eq(commentReactions.type, "like"), eq(commentReactions.commentId, comments.id)),
@@ -98,9 +142,11 @@ export const listComments = base
         .from(comments)
         .innerJoin(users, eq(comments.userId, users.id))
         .leftJoin(viewerReactions, eq(comments.id, viewerReactions.commentId))
+        .leftJoin(replies, eq(comments.id, replies.parentId))
         .where(
           and(
             eq(comments.videoId, videoId),
+            parentId ? eq(comments.parentId, parentId) : isNull(comments.parentId),
             cursor
               ? or(
                   lt(comments.updatedAt, cursor.updatedAt),

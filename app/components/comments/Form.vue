@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import { toast } from "vue-sonner";
 
-const props = defineProps<{
-  videoId: string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    videoId: string;
+    parentId?: string;
+    variant?: "comment" | "reply";
+  }>(),
+  { variant: "comment" },
+);
 
 const emit = defineEmits<{
   success: [];
+  cancel: [];
 }>();
 
 const orpc = useOrpc();
@@ -36,7 +42,12 @@ const { mutate, isLoading } = useMutation(
 function onSubmit() {
   const trimmed = value.value.trim();
   if (!trimmed || isLoading.value) return;
-  mutate({ videoId: props.videoId, value: trimmed });
+  mutate({ videoId: props.videoId, parentId: props.parentId, value: trimmed });
+}
+
+function onCancel() {
+  value.value = "";
+  emit("cancel");
 }
 </script>
 
@@ -51,11 +62,16 @@ function onSubmit() {
       <Textarea
         v-model="value"
         maxlength="2000"
-        placeholder="Add a comment..."
+        :placeholder="variant === 'reply' ? 'Reply to this comment...' : 'Add a comment...'"
         class="resize-none bg-transparent overflow-hidden min-h-0"
       />
       <div class="mt-2 flex justify-end gap-2">
-        <Button type="submit" size="sm" :disabled="isLoading || !value.trim()">Comment</Button>
+        <Button v-if="variant === 'reply'" variant="ghost" type="button" @click="onCancel">
+          Cancel
+        </Button>
+        <Button type="submit" size="sm" :disabled="isLoading || !value.trim()">
+          {{ variant === "reply" ? "Reply" : "Comment" }}
+        </Button>
       </div>
     </div>
   </form>
