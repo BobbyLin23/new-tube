@@ -72,6 +72,21 @@ const { mutate: restoreThumbnail, isLoading: isRestoringThumbnail } = useMutatio
   }),
 );
 
+const { mutate: revalidate, isLoading: isRevalidating } = useMutation(
+  orpc.videos.revalidate.mutationOptions({
+    onSuccess: () => {
+      queryCache.invalidateQueries({ key: orpc.studio.list.key() });
+      queryCache.invalidateQueries({
+        key: orpc.studio.getOne.key({ input: { id: videoId.value } }),
+      });
+      toast.success("Video revalidated");
+    },
+    onError: () => {
+      toast.error("Something went wrong");
+    },
+  }),
+);
+
 const { mutate: update, isLoading: isUpdating } = useMutation(
   orpc.videos.update.mutationOptions({
     onSuccess: () => {
@@ -219,6 +234,10 @@ function isInvalid(field: { state: { meta: { isTouched: boolean; isValid: boolea
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem :disabled="isRevalidating" @click="revalidate({ id: videoId })">
+                <RotateCcwIcon class="size-4 mr-2" />
+                Revalidate
+              </DropdownMenuItem>
               <DropdownMenuItem @click="remove({ id: videoId })">
                 <TrashIcon class="size-4 mr-2" />
                 Delete

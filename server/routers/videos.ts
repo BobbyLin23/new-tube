@@ -112,6 +112,55 @@ export const generationStatus = authed
     return { status: "pending" as const };
   });
 
+export const revalidateVideo = authed
+  .input(
+    z.object({
+      id: z.uuid(),
+    }),
+  )
+  .handler(async ({ context, input }) => {
+    const { userId } = context;
+    const { id } = input;
+
+    const [existingVideo] = await db
+      .select()
+      .from(videos)
+      .where(and(eq(videos.id, id), eq(videos.userId, userId)));
+
+    if (!existingVideo) {
+      throw new ORPCError("NOT_FOUND");
+    }
+
+    if (!existingVideo.muxUploadId) {
+      throw new ORPCError("BAD_REQUEST");
+    }
+
+    const upload = await mux.video.uploads.retrieve(existingVideo.muxUploadId);
+
+    if (!upload.asset_id) {
+      throw new ORPCError("BAD_REQUEST");
+    }
+
+    const asset = await mux.video.assets.retrieve(upload.asset_id);
+
+    const playbackId = asset.playback_ids?.[0]?.id ?? null;
+    const duration = asset.duration ? Math.round(asset.duration * 1000) : 0;
+
+    const [updatedVideo] = await db
+      .update(videos)
+      .set({
+        muxStatus: asset.status,
+        muxPlaybackId: playbackId,
+        muxAssetId: asset.id,
+        duration,
+        updatedAt: new Date(),
+      })
+      .where(and(eq(videos.id, id), eq(videos.userId, userId)))
+      .returning();
+
+    return updatedVideo;
+  });
+
 export const createVideo = authed.handler(async ({ context }) => {
   const upload = await mux.video.uploads.create({
     new_asset_settings: {

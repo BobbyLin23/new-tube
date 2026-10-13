@@ -10,6 +10,7 @@ import {
   generateDescription,
   generateThumbnail,
   generationStatus,
+  revalidateVideo,
 } from "~~/server/routers/videos";
 import { listVideosInStudio, getVideoById } from "~~/server/routers/studio";
 import { createVideoView } from "./videoViews";
@@ -17,6 +18,7 @@ import { dislikeVideo, likeVideo } from "./video-reactions";
 import { dislikeComment, likeComment } from "./comment-reactions";
 import { createComment, listComments, removeComment } from "./comments";
 import { listSuggestions } from "./suggestions";
+import { listSearch } from "./search";
 import { removeSubscription, subscribeUser } from "./subscriptions";
 
 export { authed, base } from "./base";
@@ -37,6 +39,7 @@ export const appRouter = {
     generateDescription,
     generateThumbnail,
     generationStatus,
+    revalidate: revalidateVideo,
   },
   studio: {
     list: listVideosInStudio,
@@ -60,6 +63,9 @@ export const appRouter = {
   },
   suggestions: {
     getMany: listSuggestions,
+  },
+  search: {
+    getMany: listSearch,
   },
   subscriptions: {
     create: subscribeUser,

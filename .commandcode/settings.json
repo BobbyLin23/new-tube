@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Shell(ls node_modules/@orpc/pinia-colada/dist/ 2>/dev/null; echo \"---MUX---\"; find node_modules/@mux/mux-node -maxdepth 2 -type d | head -30)",
+      "Shell(ls -la node_modules/@mux/ 2>/dev/null; ls -la node_modules/.pnpm 2>/dev/null | grep -i mux)",
+      "Shell(grep:*)",
+      "Shell(node -e import('drizzle-orm').then(m=>console.log(['ilike','ne','getColumns','or','lt','desc','and','eq'].map(k=>k+':'+(typeof m[k])).join(' '))) 2 >& 1)",
+      "Shell(pnpm:*)",
+      "Shell(pnpm exec nuxt typecheck > /tmp/tc.log 2>&1; echo \"EXIT=$?\"; echo \"--- error lines ---\"; grep -nE \"error TS|Error:|error\" /tmp/tc.log | head -40; echo \"--- tail ---\"; tail -15 /tmp/tc.log)"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  }
+}

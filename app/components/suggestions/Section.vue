@@ -35,8 +35,13 @@ const suggestions = computed(() => (data.value?.pages ?? []).flatMap((page) => p
 </script>
 
 <template>
-  <div v-if="isPending" role="status" class="space-y-3">
-    <Skeleton v-for="i in 4" :key="i" class="h-24 w-full" />
+  <div v-if="isPending" role="status">
+    <div class="hidden md:block space-y-3">
+      <VideosRowCardSkeleton v-for="i in 6" :key="i" size="compact" />
+    </div>
+    <div class="block md:hidden space-y-10">
+      <VideosGridCardSkeleton v-for="i in 6" :key="i" />
+    </div>
   </div>
   <template v-else>
     <div class="hidden md:block space-y-3">
