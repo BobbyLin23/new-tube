@@ -15,8 +15,16 @@ watch(
 
 function onSubmit() {
   const newQuery = value.value.trim();
+  const categoryId = typeof route.query.categoryId === "string" ? route.query.categoryId : "";
+
   value.value = newQuery;
-  navigateTo({ path: "/search", query: newQuery ? { query: newQuery } : {} });
+  navigateTo({
+    path: "/search",
+    query: {
+      ...(newQuery ? { query: newQuery } : {}),
+      ...(categoryId ? { categoryId } : {}),
+    },
+  });
 }
 </script>
 

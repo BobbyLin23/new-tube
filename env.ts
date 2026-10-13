@@ -32,5 +32,6 @@ export const env = createEnv({
   },
   client: {
     NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
+    NUXT_PUBLIC_APP_URL: z.url(),
   },
 });

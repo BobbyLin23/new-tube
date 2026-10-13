@@ -10,7 +10,7 @@ const orpc = useOrpc();
 
 type SearchCursor = { id: string; updatedAt: Date };
 
-const { data, hasNextPage, loadNextPage, isPending } = useInfiniteQuery(() =>
+const { data, hasNextPage, loadNextPage, isPending, error } = useInfiniteQuery(() =>
   orpc.search.getMany.infiniteOptions<SearchCursor | undefined>({
     input: (cursor) => ({
       query: props.query,
@@ -37,10 +37,16 @@ async function loadMore() {
 }
 
 const results = computed(() => (data.value?.pages ?? []).flatMap((page) => page.items));
+
+// Keep already loaded pages visible when only a "load more" request fails.
+const hasResults = computed(() => results.value.length > 0);
 </script>
 
 <template>
-  <div v-if="isPending" role="status">
+  <div v-if="error && !hasResults" role="alert" class="py-6">
+    <p class="text-sm text-destructive">Unable to load search results.</p>
+  </div>
+  <div v-else-if="isPending" role="status">
     <div class="hidden md:block space-y-3">
       <VideosRowCardSkeleton v-for="i in 6" :key="i" />
     </div>

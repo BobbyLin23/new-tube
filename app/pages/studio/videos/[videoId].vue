@@ -177,11 +177,8 @@ function onGenerateThumbnail(prompt: string) {
   return generate("thumbnail", prompt);
 }
 
-// TODO: Change if deploying outside of localhost
 const config = useRuntimeConfig();
-const fullUrl = computed(
-  () => `${config.public.siteUrl || "http://localhost:5011"}/videos/${videoId.value}`,
-);
+const fullUrl = computed(() => `${config.public.appUrl}/videos/${videoId.value}`);
 
 const isCopied = ref(false);
 

@@ -10,12 +10,15 @@ const props = defineProps<{
   onRemove?: () => void;
 }>();
 
-async function onShare() {
-  const fullUrl = new URL(`/videos/${encodeURIComponent(props.videoId)}`, window.location.origin)
-    .href;
+const config = useRuntimeConfig();
 
+const fullUrl = computed(
+  () => `${config.public.appUrl}/videos/${encodeURIComponent(props.videoId)}`,
+);
+
+async function onShare() {
   try {
-    await navigator.clipboard.writeText(fullUrl);
+    await navigator.clipboard.writeText(fullUrl.value);
     toast.success("Link copied to the clipboard");
   } catch {
     toast.error("Unable to copy the link. Please try again.");

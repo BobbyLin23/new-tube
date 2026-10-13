@@ -40,7 +40,9 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      siteUrl: "",
+      // App origin used for share links; overridden by NUXT_PUBLIC_APP_URL.
+      // Must include the protocol (e.g. https://example.com).
+      appUrl: "",
     },
   },
   devServer: {
